@@ -1,0 +1,15 @@
+<div >
+    <div class="item-headline-music"><i class="haofont hao-icon-music"></i><span>网易云音乐</span></div>
+    <div class="card-widget card-music" onclick="window.location.href='/music';">
+        <div id="flip-wrapper-card">
+            <div id="flip-music">
+                <div class="msimg" th:style="'background:url(' + ${assets_link} + '/images/netease-light.svg) center center/99% no-repeat'"></div>
+                <div class="back msimg" th:style="'background:url(' + ${assets_link} + '/images/netease-light-back.svg) center center/99% no-repeat'"></div>
+            </div>
+        </div>
+    </div>
+    <style>
+        [data-theme=dark] #aside-content #flip-wrapper-card #flip-music .msimg {background: url("[(${assets_link} + '/images/netease-dark.svg')]") center center/99% no-repeat !important}
+        [data-theme=dark] #aside-content #flip-wrapper-card #flip-music .back.msimg {background: url("[(${assets_link} + '/images/netease-dark-back.svg')]") center center/99% no-repeat !important}
+    </style>
+</div>

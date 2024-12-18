@@ -1,0 +1,22 @@
+<div class="card-widget card-webinfo">
+    <div class="webinfo">
+        <div class="webinfo-item">
+            <div class="webinfo-item-title"><i class="haofont hao-icon-file-lines"></i>
+                <div class="item-name">文章数 :</div>
+            </div>
+            <div class="item-count" th:text="${siteStatsFinder.getStats().post}"></div>
+        </div>
+        <div class="webinfo-item">
+            <div class="webinfo-item-title"><i class="haofont hao-icon-bullseye"></i>
+                <div class="item-name">访问量 :</div>
+            </div>
+            <div class="item-count" th:text="${siteStatsFinder.getStats().visit}"></div>
+        </div>
+        <div class="webinfo-item">
+            <div class="webinfo-item-title"><i class="haofont hao-icon-stopwatch"></i>
+                <div class="item-name">建站天数 :</div>
+            </div>
+            <div class="item-count" id="runtimeshow"></div>
+        </div>
+    </div>
+</div>

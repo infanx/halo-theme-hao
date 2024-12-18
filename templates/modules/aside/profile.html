@@ -1,0 +1,97 @@
+<div class="card-widget card-info">
+    <div class="card-content">
+        <div class="card-info-avatar is-center">
+            <div class="author-info__top-group">
+                <div class="author-info__sayhi" id="author-info__sayhi" onclick="heo.changeSayHelloText()">你好啊！我是</div>
+                <img class="avatar-img" th:with=" img = ${site.logo}"
+                    th:src="${isLazyload ? loadingImg : img}" th:data-lazy-src="${ isLazyload ? img : ''}">
+            </div>
+            <div class="author-info__name">infanx</div>
+            <div class="author-info__description"></div>
+        </div>
+    </div>
+    <div class="banner-button-group">
+        <a class="banner-button" href="/about">
+            <i class="haofont hao-icon-circle-arrow-right"></i>
+            <span class="banner-button-text">了解更多</span>
+        </a>
+    </div>
+    <!-- 社交链接 -->
+    <!-- <div class="card-info-social-icons is-center">
+        <a class="social-icon" rel="external nofollow" target="_blank" href="" title="">
+            <i class=""></i>
+        </a>
+    </div> -->
+
+    <style>
+        #aside-content .card-info #card-info-btn {
+            display: none;
+        }
+        #aside-content .card-info .card-info-social-icons {
+            margin: 0;
+            padding-top: 10px;
+            display: flex;
+            justify-content: flex-start;
+            flex-direction: row;
+            flex-wrap: wrap;
+            cursor: pointer;
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+        }
+        #aside-content .card-info .card-info-social-icons .social-icon {
+            margin: 0;
+            margin-right: 8px;
+        }
+        #aside-content .card-info .card-info-social-icons i {
+            background: var(--heo-white-op);
+            color: var(--heo-white);
+            font-size: 1.2rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+        #aside-content .card-info .card-info-social-icons i:hover {
+            background: var(--heo-white-op);
+            transform: scale(1.1);
+            color: var(--heo-white);
+            box-shadow: none;
+        }
+        #aside-content .card-info .banner-button {
+            height: 40px;
+            width: 124px;
+            border-radius: 20px;
+            justify-content: center;
+        }
+        @media screen and (min-width: 1300px) {
+            #aside-content .card-info .card-info-social-icons i {
+                color: var(--heo-white);
+            }
+            [data-theme=dark] #aside-content .card-info .card-info-social-icons i {
+                color: var(--heo-white);
+            }
+        }
+        #aside-content .card-info img {
+            width: 28px;
+            right: 24px;
+            top: 20px;
+            border-radius: 500px;
+            transition: all 0.5s ease 0s;
+            position: absolute;
+        }
+        #aside-content .card-info .author-info__name {
+            font-weight: 500;
+            font-size: 1.57em;
+        }
+        #aside-content .card-info .author-info__name {
+            text-align: left;
+            font-weight: bold;
+            color: var(--heo-white);
+            font-size: 28px;
+            line-height: 1.1;
+            margin-top: 0.8rem;
+            margin-bottom: 0.4rem;
+        }
+    </style>
+</div>

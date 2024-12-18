@@ -1,0 +1,332 @@
+<th:block th:fragment="head(htmlType)"><!-- 公共Head -->
+    <meta charset="UTF-8">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <meta content="telephone=no" name="format-detection">
+    <meta content="var(--heo-card-bg)" name="theme-color">
+    <title th:text="${siteTitle}"></title>
+    <link rel="shortcut icon" th:href="${site.favicon}">
+    <script src="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js"></script>
+    <script th:src="${assets_link + '/js/heo.js'}"></script>
+    <link rel="stylesheet" th:href="${assets_link + '/zhheo/zhheoblog.css'}">
+    <link rel="stylesheet" th:href="${assets_link + '/zhheo/custom.css'}">
+    <link rel="stylesheet" th:href="${assets_link + '/zhheo/commentBarrage.css'}">
+    <style>
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--heo-main);
+            background-image: -webkit-linear-gradient(45deg,rgba(255,255,255,.4) 25%,transparent 25%,transparent 50%,rgba(255,255,255,.4) 50%,rgba(255,255,255,.4) 75%,transparent 75%,transparent);
+            border-radius: 2em
+        }
+    </style>
+    <!-- Swiper 在瞬间滚动时会使用 -->
+    <link rel="stylesheet" href="https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/Swiper/8.0.6/swiper-bundle.min.css">
+    <!-- 右下角通知 -->
+    <link href="https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/node-snackbar/0.1.16/snackbar.min.css" media="print" onload="this.media='all'" rel="stylesheet">
+    <!-- 解决 pjax问题  自动识别语言-->
+    <!-- <script src="/plugins/PluginPrismJS/assets/static/highlight.js/highlight.min.js"></script> -->
+    <!-- <script>document.addEventListener("pjax:complete",function(){hljs.highlightAll()})</script> -->
+    <!-- <script data-pjax src="/plugins/PluginPrismJS/assets/static/plugins/copy-to-clipboard/prism-copy-to-clipboard.min.js"></script> -->
+    <!-- 自动识别语言 -->
+    <script th:src="${assets_link+'/libs/prism/highlight.min.js'}"></script>
+    <script>document.addEventListener("pjax:complete",function(){hljs.highlightAll()});document.addEventListener("DOMContentLoaded",function(){hljs.highlightAll()})</script>
+    <!-- 自动识别语言 End -->
+
+    <!-- 代码块 Start -->
+    <link rel="preload" as="style" onload="this.rel='stylesheet'" th:href="${assets_link+'/libs/prism/prism.min.css'}">
+    <link rel="preload" as="style" onload="this.rel='stylesheet'" th:href="${assets_link+'/libs/prism/code.css'}">
+    <link rel="preload" as="style" onload="this.rel='stylesheet'" data-code-theme="light" th:href="${assets_link+ '/libs/prism/themes/prism-'+theme.config.code.theme_light+'.css'}">
+    <link rel="preload" as="style" onload="this.rel='stylesheet'" data-code-theme="dark" th:href="${assets_link+'/libs/prism/themes/prism-'+theme.config.code.theme_dark+'.css'}">
+    <script data-pjax type="text/javascript" th:src="${assets_link+'/libs/prism/prism.min.js'}"></script>
+    <style>#article-container .code-toolbar pre.close{overflow:hidden;height:300px}</style>
+    <!-- 代码块 End -->
+    <!-- 页脚内容-样式一 -->
+    <script async="async">
+        (function () {
+            var grt = new Date("03/04/2020 00:00:00"); //设置网站上线时间
+            var now = new Date();
+            var dnum;
+            var hnum;
+            var mnum;
+            var snum;
+            var nowHour;
+            var t;
+            var n;
+            // 计算并更新天数、小时数、分钟数和秒数
+            function updateTime() {
+                now = new Date(); // 更新 now 的值
+                nowHour = now.getHours(); // 更新 nowHour 的值
+                var days = (now - grt) / 1000 / 60 / 60 / 24;
+                dnum = Math.floor(days);
+                var hours = (now - grt) / 1000 / 60 / 60 - 24 * dnum;
+                hnum = Math.floor(hours);
+                if (String(hnum).length == 1) { hnum = "0" + hnum;}
+                var minutes = (now - grt) / 1000 / 60 - 24 * 60 * dnum - 60 * hnum;
+                mnum = Math.floor(minutes);
+                if (String(mnum).length == 1) { mnum = "0" + mnum;}
+                var seconds = (now - grt) / 1000 - 24 * 60 * 60 * dnum - 60 * 60 * hnum - 60 * mnum;
+                snum = Math.round(seconds);
+                if (String(snum).length == 1) { snum = "0" + snum;}
+                t = Math.trunc(234e8 + (now - grt) / 1e3 * 17)
+                n = (t / 1496e5).toFixed(6)
+            }
+            function updateHtml() {
+                const footer = document.getElementById("footer");
+                if (!footer) return
+                let currentTimeHtml = "";
+                if (document.getElementById("workboard")) {
+                    currentTimeHtml =  `<div id="runtimeTextTip"> 本站居然运行了 ${dnum} 天<span id='runtime'> ${hnum} 小时 ${mnum} 分 ${snum} 秒 </span><i class='haofont hao-icon-heartbeat' style='color:red'></i> <br> 旅行者1号当前距离地球 ${t} 千米，约为 ${n} 个天文单位 🚀 </div>`
+                    document.getElementById("workboard").innerHTML = currentTimeHtml;
+                }
+            }
+            setInterval(() => {
+                updateTime();
+                updateHtml();
+            }, 1000);
+        })();
+    </script>
+    <script>
+        (win => {
+            win.saveToLocal = {
+                set: function setWithExpiry(key, value, ttl) {
+                    if (ttl === 0) return
+                    const now = new Date()
+                    const expiryDay = ttl * 86400000
+                    const item = {
+                        value: value,
+                        expiry: now.getTime() + expiryDay,
+                    }
+                    localStorage.setItem(key, JSON.stringify(item))
+                },
+                get: function getWithExpiry(key) {
+                    const itemStr = localStorage.getItem(key)
+                    if (!itemStr) {
+                        return undefined
+                    }
+                    const item = JSON.parse(itemStr)
+                    const now = new Date()
+                    if (now.getTime() > item.expiry) {
+                        localStorage.removeItem(key)
+                        return undefined
+                    }
+                    return item.value
+                }
+            }
+            win.getScript = url => new Promise((resolve, reject) => {
+                const script = document.createElement('script')
+                script.src = url
+                script.async = true
+                script.onerror = reject
+                script.onload = script.onreadystatechange = function () {
+                    const loadState = this.readyState
+                    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                    script.onload = script.onreadystatechange = null
+                    resolve()
+                }
+                document.head.appendChild(script)
+            })
+            win.getCSS = (url,id = false) => new Promise((resolve, reject) => {
+                const link = document.createElement('link')
+                link.rel = 'stylesheet'
+                link.href = url
+                if (id) link.id = id
+                link.onerror = reject
+                link.onload = link.onreadystatechange = function() {
+                    const loadState = this.readyState
+                    if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+                    link.onload = link.onreadystatechange = null
+                    resolve()
+                }
+                document.head.appendChild(link)
+            })
+            win.activateDarkMode = function () {
+                document.documentElement.setAttribute('data-theme', 'dark')
+                document.documentElement.classList.add('color-scheme-dark')
+                heo.initThemeColor()
+            }
+            win.activateLightMode = function () {
+                document.documentElement.setAttribute('data-theme', 'light')
+                document.documentElement.classList.remove('color-scheme-dark')
+                heo.initThemeColor()
+            }
+            const t = saveToLocal.get('theme')
+            const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+            const isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+            const isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+            const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+            if (t === undefined) {
+                if (isLightMode) activateLightMode()
+                else if (isDarkMode) activateDarkMode()
+                else if (isNotSpecified || hasNoSupport) {
+                    const now = new Date()
+                    const hour = now.getHours()
+                    const isNight = hour <= 6 || hour >= 18
+                    isNight ? activateDarkMode() : activateLightMode()
+                }
+                window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+                    if (saveToLocal.get('theme') === undefined) {
+                        e.matches ? activateDarkMode() : activateLightMode()
+                    }
+                })
+            } else if (t === 'light') activateLightMode()
+            else activateDarkMode()
+            if("[[${theme.config.style.colorScheme}]]" === 'dark')
+                activateDarkMode()
+            if("[[${theme.config.style.colorScheme}]]" === 'light')
+                activateLightMode()
+            const asideStatus = saveToLocal.get('aside-status')
+            if (asideStatus !== undefined) {
+                if (asideStatus === 'hide') {
+                    document.documentElement.classList.add('hide-aside')
+                } else {
+                    document.documentElement.classList.remove('hide-aside')
+                }
+            }
+        })(window)
+    </script>
+    <!-- 加载进度条 -->
+    <script data-pace-options="{ &quot;restartOnRequestAfter&quot;:false,&quot;eventLag&quot;:false}" th:src="${assets_link + '/libs/pace/pace.min.js'}" th:if="${theme.config.other.loadingBoxs.loadProgressBar}"></script>
+    <!-- 复制 https://github.com/zenorocha/clipboard.js -->
+    <script th:src="${assets_link + '/libs/clipboard/clipboard.min.js'}"></script>
+    <!-- 关于统计-->
+    <script th:src="${assets_link + '/libs/countup/countup.js'}"></script>
+    <!-- icon图标 -->
+    <link rel="stylesheet" th:href="${assets_link + '/icon/iconfont.css'}">
+    <!-- 声明一些公共信息 -->
+    <script id="site-config" th:inline="javascript">
+        var GLOBAL_CONFIG = {
+            // 页面类型 index,page,post,tag,category
+            htmlType: [[${ htmlType }]],
+            postTitle: [[${ htmlType == 'post' ? post.spec.title : htmlType == 'page' ? singlePage.spec.title : ''}]],
+            isPost: [[${htmlType == 'post'}]],
+            isHome: [[${ htmlType == 'index'}]],
+            copyright: undefined,
+            lightbox: 'fancybox',
+            lazyload: {
+                enable: [[${theme.config.other.vanillaLazyload.enable}]],
+                error: [[@{${theme.config.other.vanillaLazyload.errorImg}}]]
+            },
+            isFriendLinksInFooter: true,
+            loadingBox: [[${theme.config.other.loadingBoxs.loadingBoxEnable}]],
+            loadProgressBar: [[${theme.config.other.loadingBoxs.loadProgressBar}]],
+            navMusicEnable: true,
+            isMusic: [[${ htmlType == 'music'}]],
+            helloText: ["🤖️ 数码科技爱好者", "🔍 分享与热心帮助", "🏠 智能家居小能手", "🔨 设计开发一条龙", "🤝 专修交互与设计", "🏃 脚踏实地行动派", "🧱 团队小组发动机"],
+            profileStyle: "default",
+            // 右键菜单
+            rightMenuEnable: true,
+            date_suffix: {
+                just: '刚刚',
+                min: '分钟前',
+                hour: '小时前',
+                day: '天前',
+                month: '个月前'
+            },
+            Snackbar: {
+                chs_to_cht: "你已切换为繁体",
+                cht_to_chs: "你已切换为简体",
+                day_to_night: "你已切换为深色模式",
+                night_to_day: "你已切换为浅色模式",
+                bgLight: "[(${theme.config.style.themeLightSkin})]",
+                bgDark: "[(${theme.config.style.themeDarkSkin})]",
+                position: "top-center",
+            },
+            translate: {
+                defaultEncoding: [[${theme.config.style.translate.defaultEncoding}]],
+                translateDelay: 0,
+                msgToTraditionalChinese: "繁",
+                msgToSimplifiedChinese: "简",
+                rightMenuMsgToTraditionalChinese: "轉為繁體",
+                rightMenuMsgToSimplifiedChinese: "转为简体"
+            },
+            prism: {
+                enable: [[${ theme.config.code.enable }]],
+                enable_title: [[${ theme.config.code.enable_title }]],
+                enable_hr: [[${ theme.config.code.enable_hr }]],
+                enable_line: [[${ theme.config.code.enable_line }]],
+                enable_copy: [[${ theme.config.code.enable_copy }]],
+                enable_expander: [[${ theme.config.code.enable_expander }]],
+                // 代码块高度
+                prism_limit: 330,
+                // 代码块高度限制
+                enable_height_limit: false
+            },
+            source: {
+                power: {
+                    powerLink: "https:\/\/afdian.com\/a\/",
+                    showNum: 3,
+                    username: "infanx"
+                },
+                links: {
+                    linksUrl: "\/links",
+                    linksNum: 3,
+                },
+                jQuery: 'https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/jquery/3.6.0/jquery.min.js',
+                justifiedGallery: {
+                    js: 'https://npm.elemecdn.com/flickr-justified-gallery@2.1.2/dist/fjGallery.min.js',
+                    css: 'https://npm.elemecdn.com/flickr-justified-gallery@2.1.2/dist/fjGallery.css'
+                },
+                fancybox: {
+                    js: 'https://lf6-cdn-tos.bytecdntp.com/cdn/expire-1-M/fancybox/3.5.7/jquery.fancybox.min.js',
+                    css: '/null'
+                },
+                comments: {
+                    use: [[${theme.config.comments.use}]],
+                    maxBarrage: [[${ theme.config.comments.commentBarrageConfig.maxBarrage }]],
+                    barrageTime: [[${ theme.config.comments.commentBarrageConfig.barrageTime }]],
+                    mailMd5: "[(${theme.config.comments.commentBarrageConfig.mailMd5})]",
+                    lazyload: [[${theme.config.comments.lazyload}]],
+                    textarea: [[${ theme.config.comments.use == 'Twikoo' ? 'el-textarea__inner' :
+                                    theme.config.comments.use == 'Artalk' ? 'atk-textarea' :
+                                    theme.config.comments.use == 'Waline' ? 'wl-editor' : 'appearance-none' }]]
+                },
+                post: {
+                    // 文章主色匹配图片颜色
+                    dynamicBackground: true
+                },
+                tool: {
+                    switch: true
+                },
+                postAi: {
+                    ai: [[${htmlType != 'post' || !theme.config.post.aiDescription.aiDescriptionEnable  ?  ''  :
+                                        theme.config.post.aiDescription.mode != 'local' && !theme.config.post.aiDescription.switchBtn ? '' :
+                                        post.spec.excerpt.autoGenerate ? '本地模式需要自己填写文章摘要' :
+                                        #strings.isEmpty(post.status.excerpt) ? '请填写文章摘要' : post.status.excerpt  }]],
+                    randomNum: [[${theme.config.post.aiDescription.randomNum}]],
+                    basicWordCount: [[${theme.config.post.aiDescription.basicWordCount}]],
+                    btnLink: "[(${theme.config.post.aiDescription.btnLink})]",
+                    gptName: "[(${theme.config.post.aiDescription.gptName})]",
+                    modeName: [[${theme.config.post.aiDescription.mode}]],
+                    switchBtn: [[${theme.config.post.aiDescription.switchBtn}]],
+                    keys: "[(${theme.config.post.aiDescription.key})]",
+                    Referers: "[(${theme.config.post.aiDescription.Referer})]",
+                },
+                img: {
+                    src: [[${isLazyload ? 'data-lazy-src' : 'src' }]]
+                },
+                twikoo: {
+                    js: [[${not #strings.isEmpty(theme.config.comments.twikoos.js) ? theme.config.comments.twikoos.js : assets_link +'/libs/twikoo/twikoo.all.min.js' }]],
+                    twikooUrl: "[(${theme.config.comments.twikoos.envId})]",
+                    accessToken: "[(${theme.config.comments.twikoos.accessToken})]",
+                },
+                artalk: {
+                    js: [[${not #strings.isEmpty(theme.config.comments.artalks.artalkJs) ? theme.config.comments.artalks.artalkJs : assets_link +'/libs/artalk/Artalk.js' }]],
+                    css: [[${not #strings.isEmpty(theme.config.comments.artalks.artalkCss) ? theme.config.comments.artalks.artalkCss : assets_link +'/libs/artalk/Artalk.css' }]],
+                    artalkUrl: "[(${theme.config.comments.artalks.server})]",
+                    siteName: "[(${theme.config.comments.artalks.siteName})]",
+                },
+                waline: {
+                    js: [[${not #strings.isEmpty(theme.config.comments.walines.walinesJs) ? theme.config.comments.walines.walinesJs : 'https://cdn.cbd.int/@waline/client@2.15.7/dist/waline.js' }]],
+                    serverURL: "[(${theme.config.comments.walines.serverURL})]",
+                    locale: [[${not #strings.isEmpty(theme.config.comments.walines.locale) ? theme.config.comments.walines.locale : '' }]]
+                },
+                footer: {
+                    default_enable: true
+                },
+                about: {
+                    rewardList: [],
+                    rewardAmount: 10
+                }
+            }
+        };
+    </script>
+</th:block>

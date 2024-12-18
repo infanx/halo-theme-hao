@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{modules/layout :: layout(content = ~{::content}, htmlType = 'about', title = ${singlePage.spec.title + ' | ' + site.title}, head = ~{::head})}">
+<th:block th:fragment="head">
+    <th:block th:replace="~{modules/open-graph :: open-graph(_title = ${singlePage.spec.title},
+                _permalink = ${singlePage.status.permalink},
+                _cover = ${singlePage.spec.cover},
+                _excerpt = ${singlePage.status.excerpt},
+                _type = 'website')}"></th:block>
+</th:block>
+<th:block th:fragment="content">
+    <div class="page" id="body-wrap">
+        <!-- 头部导航栏 -->
+        <header class="not-top-img" id="page-header">
+            <nav th:replace="~{modules/nav :: nav(title = ${singlePage.spec.title})}"></nav>
+        </header>
+        <main class="layout hide-aside" id="content-inner">
+            <div id="page">
+                <div id="about-page">
+                    <div class="author-info">
+                        <div class="author-tag-left">
+                            <span class="author-tag">123</span>
+                        </div>
+                        <div class="author-img">
+                            <img src="https://cdn.infanx.com/images/ABA7561F29AE4D0DB8DE37F7C812B559.jpg">
+                        </div>
+                        <div class="author-tag-right">
+                            <span class="author-tag">456</span>
+                        </div>
+                    </div>
+                    <div class="author-title">关于</div>
+                    <div class="author-content">
+                        <div class="author-content-item myInfoAndSayHello">
+                            <div class="title1">Hello👋</div>
+                            <div class="title2">I'm <span class="inline-word">infanx</span></div>
+                            <div class="title1">是一名 云计算架构师 摸鱼前端 摆烂Java</div>
+                        </div>
+                        <div class="aboutsiteTips author-content-item">
+                            <div class="author-content-item-tips">一定</div>
+                            <h2 >记得<br>修改这块<span class="inline-word">代码</span>
+                                <div class="mask">
+                                    <span class="first-tips">优秀的产品</span>
+                                    <span data-up="">出色的设计</span>
+                                    <span data-show="">高效的编程</span>
+                                    <span>人性化的用户体验</span>
+                                </div>
+                            </h2>
+                        </div>
+                        <script>
+                            var pursuitInterval = null;
+                            pursuitInterval = setInterval(function () {
+                                const show = document.querySelector('span[data-show]')
+                                const next = show.nextElementSibling || document.querySelector('.first-tips')
+                                const up = document.querySelector('span[data-up]')
+                                if (up) {
+                                    up.removeAttribute('data-up')
+                                }
+                                show.removeAttribute('data-show')
+                                show.setAttribute('data-up', '')
+                                next.setAttribute('data-show', '')
+                            }, 2000)
+                            document.addEventListener('pjax:send', function () {
+                                clearInterval(pursuitInterval);
+                            });
+                        </script>
+                    </div>
+                    <div class="hello-about">
+                        <div class="cursor" style="translate: none; rotate: none; scale: none; transform: translate(721px,180px);"></div>
+                        <div class="shapes">
+                            <div class="shape shape-1"
+                                 style="translate: none; rotate: none; scale: none; transform: translate(721px,180px);">
+                            </div>
+                            <div class="shape shape-2"
+                                 style="translate: none; rotate: none; scale: none; transform: translate(721px,180px);">
+                            </div>
+                            <div class="shape shape-3"
+                                 style="translate: none; rotate: none; scale: none; transform: translate(721px,180px);">
+                            </div>
+                        </div>
+                        <div class="content">
+                            <h1>VSCode! 启动!</h1>
+                        </div>
+                        <style>
+                            .hello-about {
+                                margin: 20px auto 0;
+                                width: 100%;
+                                border-radius: 24px;
+                                background: var(--heo-card-bg);
+                                border: var(--style-border-always);
+                                box-shadow: var(--heo-shadow-border);
+                                position: relative;
+                                overflow: hidden;
+                                user-select: none;
+                            }
+                    
+                            .shapes {
+                                position: relative;
+                                height: 200px;
+                                width: 100%;
+                                background: #2128bd;
+                                overflow: hidden;
+                            }
+                    
+                            .shape {
+                                will-change: transform;
+                                position: absolute;
+                                border-radius: 50%;
+                            }
+                    
+                            .shape.shape-1 {
+                                background: #005ffe;
+                                width: 650px;
+                                height: 650px;
+                                margin: -325px 0 0 -325px;
+                            }
+                    
+                            .shape.shape-2 {
+                                background: #ffe5e3;
+                                width: 440px;
+                                height: 440px;
+                                margin: -220px 0 0 -220px;
+                            }
+                    
+                            .shape.shape-3 {
+                                background: #ffcc57;
+                                width: 270px;
+                                height: 270px;
+                                margin: -135px 0 0 -135px;
+                            }
+                    
+                            .hello-about .content {
+                                top: 0;
+                                left: 0;
+                                position: absolute;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                                height: 200px;
+                                width: 100%;
+                                background: #fff;
+                                mix-blend-mode: screen;
+                            }
+                    
+                            [data-theme="dark"] .hello-about .content {
+                                background: transparent;
+                            }
+                    
+                            [data-theme="dark"] .hello-about h1 {
+                                color: var(--heo-white);
+                            }
+                    
+                            .hello-about h1 {
+                                font-size: 200px;
+                                color: #000;
+                                margin: 0;
+                                text-align: center;
+                                font: inherit;
+                                vertical-align: baseline;
+                                line-height: 1;
+                                font-size: calc((0.09 * 100vw + (16px)));
+                                width: 100%;
+                                height: 100%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+                    
+                            @media (min-width: 419px) {
+                                .hello-about h1 {
+                                    font-size: calc((0.09* 100vw +(16px)));
+                                }
+                            }
+                    
+                            @media (max-width: 768px) {
+                                .hello-about {
+                                    margin:20px 0 auto
+                                }
+                            }
+                    
+                            .cursor {
+                                position: absolute;
+                                background: #2128bd;
+                                width: 20px;
+                                height: 20px;
+                                margin: -10px 0 0 -10px;
+                                border-radius: 50%;
+                                will-change: transform;
+                                user-select: none;
+                                pointer-events: none;
+                                z-index: 3;
+                            }
+                    
+                            ::selection {
+                                color: #fff;
+                                background: #2128bd;
+                            }
+                        </style>
+                        <script defer>
+                            function initHelloAbout() {
+                                const helloAboutEl = document.querySelector(".hello-about");
+                                helloAboutEl.addEventListener("mousemove", evt => {
+                                    const mouseX = evt.offsetX;
+                                    const mouseY = evt.offsetY;
+                                    gsap.set(".cursor", {
+                                        x: mouseX,
+                                        y: mouseY,
+                                    });
+                    
+                                    gsap.to(".shape", {
+                                        x: mouseX,
+                                        y: mouseY,
+                                        stagger: -0.1,
+                                    });
+                                });
+                            }
+                            if (typeof gsap === "object") {
+                                initHelloAbout()
+                            } else {
+                                getScript("https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/gsap/3.9.1/gsap.min.js").then(initHelloAbout);
+                            }
+                        </script>
+                    </div>
+                    <div class="author-content">
+
+                        <div class="author-content-item skills">
+                            <div class="card-content">
+                                <div class="author-content-item-tips">技能</div>
+                                <span class="author-content-item-title">开启创造力</span>
+                                <div class="skills-style-group">
+                                    <div class="tags-group-all">
+                                        <!--  banners 使用默认值-->
+                                        <div class="tags-group-wrapper">
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#989bf8">
+                                                    <img th:src="${assets_link + '/images/icons/AfterEffect.png'}"
+                                                        title="AfterEffect">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#fff">
+                                                    <img th:src="${assets_link + '/images/icons/Sketch.png'}"
+                                                        title="Sketch">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#57b6e6">
+                                                    <img th:src="${assets_link + '/images/icons/Docker.png'}"
+                                                        title="Docker">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#4082c3">
+                                                    <img th:src="${assets_link + '/images/icons/Photoshop.png'}"
+                                                        title="Photoshop">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#fff">
+                                                    <img th:src="${assets_link + '/images/icons/FinalCutPro.png'}"
+                                                        title="FinalCutPro">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#fff">
+                                                    <img th:src="${assets_link + '/images/icons/Python.png'}"
+                                                        title="Python">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#eb6840">
+                                                    <img th:src="${assets_link + '/images/icons/Swift.png'}"
+                                                        title="Swift">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#8f55ba">
+                                                    <img th:src="${assets_link + '/images/icons/Principle.png'}"
+                                                        title="Principle">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#f29e39">
+                                                    <img th:src="${assets_link + '/images/icons/illustrator.png'}"
+                                                        title="illustrator">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#2c51db">
+                                                    <img th:src="${assets_link + '/images/icons/CSS3.png'}" title="CSS3">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#f7cb4f">
+                                                    <img th:src="${assets_link + '/images/icons/JS.png'}" title="JS">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#e9572b">
+                                                    <img th:src="${assets_link + '/images/icons/HTML.png'}" title="HTML">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#df5b40">
+                                                    <img th:src="${assets_link + '/images/icons/Git.webp'}" title="Git">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#e65164">
+                                                    <img th:src="${assets_link + '/images/icons/Apifox.webp'}"
+                                                        title="Apifox">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#989bf8">
+                                                    <img th:src="${assets_link + '/images/icons/AfterEffect.png'}"
+                                                        title="AfterEffect">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#fff">
+                                                    <img th:src="${assets_link + '/images/icons/Sketch.png'}"
+                                                        title="Sketch">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#57b6e6">
+                                                    <img th:src="${assets_link + '/images/icons/Docker.png'}"
+                                                        title="Docker">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#4082c3">
+                                                    <img th:src="${assets_link + '/images/icons/Photoshop.png'}"
+                                                        title="Photoshop">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#fff">
+                                                    <img th:src="${assets_link + '/images/icons/FinalCutPro.png'}"
+                                                        title="FinalCutPro">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#fff">
+                                                    <img th:src="${assets_link + '/images/icons/Python.png'}"
+                                                        title="Python">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#eb6840">
+                                                    <img th:src="${assets_link + '/images/icons/Swift.png'}"
+                                                        title="Swift">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#8f55ba">
+                                                    <img th:src="${assets_link + '/images/icons/Principle.png'}"
+                                                        title="Principle">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#f29e39">
+                                                    <img th:src="${assets_link + '/images/icons/illustrator.png'}"
+                                                        title="illustrator">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#2c51db">
+                                                    <img th:src="${assets_link + '/images/icons/CSS3.png'}" title="CSS3">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#f7cb4f">
+                                                    <img th:src="${assets_link + '/images/icons/JS.png'}" title="JS">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#e9572b">
+                                                    <img th:src="${assets_link + '/images/icons/HTML.png'}" title="HTML">
+                                                </div>
+                                            </div>
+                                            <div class="tags-group-icon-pair">
+                                                <div class="tags-group-icon" style="background:#df5b40">
+                                                    <img th:src="${assets_link + '/images/icons/Git.webp'}" title="Git">
+                                                </div>
+                                                <div class="tags-group-icon" style="background:#e65164">
+                                                    <img th:src="${assets_link + '/images/icons/Apifox.webp'}"
+                                                        title="Apifox">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!--  banners 使用默认值-->
+                                    </div>
+
+                                    <!--  banners 使用默认值-->
+                                    <div class="skills-list">
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#989bf8">
+                                                <img th:src="${assets_link + '/images/icons/AfterEffect.png'}"
+                                                    title="AfterEffect">
+                                            </div>
+                                            <div class="skill-name"><span>AfterEffect</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#ffffff">
+                                                <img th:src="${assets_link + '/images/icons/Sketch.png'}" title="Sketch">
+                                            </div>
+                                            <div class="skill-name"><span>Sketch</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#57b6e6">
+                                                <img th:src="${assets_link + '/images/icons/Docker.png'}" title="Docker">
+                                            </div>
+                                            <div class="skill-name"><span>Docker</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#4082c3">
+                                                <img th:src="${assets_link + '/images/icons/Photoshop.png'}" title="Photoshop">
+                                            </div>
+                                            <div class="skill-name"><span>Photoshop</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#ffffff">
+                                                <img th:src="${assets_link + '/images/icons/FinalCutPro.png'}"
+                                                    title="FinalCutPro">
+                                            </div>
+                                            <div class="skill-name"><span>FinalCutPro</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#ffffff">
+                                                <img th:src="${assets_link + '/images/icons/Python.png'}" title="Python">
+                                            </div>
+                                            <div class="skill-name"><span>Python</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#eb6840">
+                                                <img th:src="${assets_link + '/images/icons/Swift.png'}" title="Swift">
+                                            </div>
+                                            <div class="skill-name"><span>Swift</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#8f55ba">
+                                                <img th:src="${assets_link + '/images/icons/Principle.png'}" title="Principle">
+                                            </div>
+                                            <div class="skill-name"><span>Principle</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#f29e39">
+                                                <img th:src="${assets_link + '/images/icons/illustrator.png'}"
+                                                    title="illustrator">
+                                            </div>
+                                            <div class="skill-name"><span>illustrator</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#2c51db">
+                                                <img th:src="${assets_link + '/images/icons/CSS3.png'}" title="CSS3">
+                                            </div>
+                                            <div class="skill-name"><span>CSS3</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#f7cb4f">
+                                                <img th:src="${assets_link + '/images/icons/JS.png'}" title="JS">
+                                            </div>
+                                            <div class="skill-name"><span>JS</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#e9572b">
+                                                <img th:src="${assets_link + '/images/icons/HTML.png'}" title="HTML">
+                                            </div>
+                                            <div class="skill-name"><span>HTML</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#df5b40">
+                                                <img th:src="${assets_link + '/images/icons/Git.webp'}" title="Git">
+                                            </div>
+                                            <div class="skill-name"><span>Git</span></div>
+                                        </div>
+
+                                        <div class="skill-info">
+                                            <div class="skill-icon" style="background:#1f1f1f">
+                                                <img th:src="${assets_link + '/images/icons/Apifox.webp'}" title="Apifox">
+                                            </div>
+                                            <div class="skill-name"><span>Apifox</span></div>
+                                        </div>
+
+                                        <div class="etc">...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="author-content-item careers">
+                            <div class="card-content">
+                                <div class="author-content-item-tips">生涯</div>
+                                <span class="author-content-item-title">无限进步</span>
+                                <!-- <div class="careers-group">
+                                    <div class="careers-item">
+                                        <div class="circle" style="background:''"></div>
+                                        <div class="name">123</div>
+                                    </div>
+                                </div> -->
+                                <img alt="生涯" class="author-content-img" src="">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="author-content">
+                        <div class="author-content-item personalities">
+                            <div class="author-content-item-tips">性格</div>
+                            <span class="author-content-item-title">建筑师</span>
+                            <div class="title2" style="color: #88619a;">INTJ</div>
+                            <div class="image"><img th:src="${assets_link + '/images/intj.svg'}" style="transform: rotateY(180deg);"></div>
+                            <div class="post-tips">
+                                在 <a href="https://www.16personalities.com/" rel="noopener nofollow" target="_blank">16Personalities</a>
+                                了解更多关于 <a href="https://www.16personalities.com/ch/INTJ-人格" rel="noopener external nofollow" target="_blank">建筑师</a>
+                            </div>
+                        </div>
+                        <div class="author-content-item buff">
+                            <div class="card-content">
+                                <div class="author-content-item-tips">特长</div>
+                                <span class="buff-title">
+                                    <span style="opacity: 0.6;margin-bottom:8px;">玄学流电脑疑难问题解决
+                                        <span class="inline-word">专家</span>
+                                    </span>
+                                    <span>软件学习能力</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="author-content" >
+                        <div class="author-content-item game-mc" style="background: url('https://www.minecraft.net/content/dam/minecraftnet/games/minecraft/key-art/Vanilla-PMP_Collection-Carousel-0_Tricky-Trials_1280x768.jpg') top / cover no-repeat">
+                            <div class="card-content">
+                                <div class="author-content-item-tips">爱好游戏</div>
+                                <span class="author-content-item-title"></span>
+                                <div class="content-bottom">
+                                    <div class="icon-group">
+                                        <div class="loading-bar" role="presentation" aria-hidden="true"></div>
+                                    </div>
+                                    <div class="tips">Java版ID：infanx_</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="author-content-item game-horizon" style="background: url('https://forza.azureedge.net/strapi-uploads/assets/xlarge_FH_5_Evergreen_Key_Art_Horizontal_9600x5400_RGB_2_adfcd010d0.webp') top / cover no-repeat">
+                            <div class="card-content">
+                                <div class="author-content-item-tips">科目三练习</div>
+                                <span class="author-content-item-title"></span>
+                                <div class="content-bottom">
+                                    <div class="tips">XboxID：infanx</div>
+                                </div>
+                            </div>
+                        </div>
+                        <style>
+                            .loading-bar::after {
+                                content: "";
+                                position: absolute;
+                                top: 500px;
+                                left: 0;
+                                filter: drop-shadow(0 -500px 0 #ece5d8);
+                                width: 500px;
+                                height: 62.5px;
+                                /* background: url('这里有空记得换上MC图标') no-repeat left 100%; */
+                                background-size: 500px 62.5px;
+                                background-position-x: 0;
+                            }
+                        </style>
+                    </div>
+                    <!-- 关注偏好&音乐偏好 -->
+                    <div class="author-content" >
+                        <div class="author-content-item like-technology" th:style="'background: url('+ @{${assets_link}} +'/images/background-computer.jpg) top / cover no-repeat;'">
+                            <div class="card-content">
+                                <div class="author-content-item-tips">关注偏好</div>
+                                <span class="author-content-item-title">数码科技</span>
+                                <div class="content-bottom">
+                                    <div class="tips">手机、电脑软硬件</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="author-content-item like-music" style="background: url('') top / cover no-repeat">
+                            <div class="card-content">
+                                <div class="author-content-item-tips">音乐偏好</div>
+                                <span class="author-content-item-title">Hiphop、华语流行、英语听力</span>
+                                <div class="content-bottom">
+                                    <div class="tips"></div>
+                                </div>
+                                <div class="banner-button-group">
+                                    <a class="banner-button" href="/music" rel="noopener nofollow">
+                                        <i class="haofont hao-icon-circle-arrow-up-right-1"></i>
+                                        <span class="banner-button-text">更多推荐</span></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 数据统计&作者相关信息 -->
+                    <div class="author-content">
+                        <div class="about-statistic author-content-item"
+                            style="background: url(https://bu.dusays.com/2023/03/12/640dc8c72f623.webp);">
+                            <div class="card-content">
+                                <div class="author-content-item-tips">数据</div>
+                                <span class="author-content-item-title">访问统计</span>
+                                <div id="statistic"></div>
+                                <div class="post-tips">这里也是</div>
+                                <div class="banner-button-group">
+                                    <a class="banner-button" onclick="pjax.loadUrl('/archives')" data-pjax-state="">
+                                        <i class="haofont hao-icon-circle-arrow-up-right-1"></i>
+                                        <span class="banner-button-text">文章</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="author-content-item-group column mapAndInfo">
+                            <div class="author-content-item map single">
+                                <span class="map-title">我现在住在 <b>江苏 南京</b></span>
+                            </div>
+                            <div class="author-content-item selfInfo single">
+                                <div>
+                                    <span class="selfInfo-title"></span>
+                                    <span class="selfInfo-content" style="font-size: 20px;">这边代码还没写好</span>
+                                </div>
+                            </div>
+                        </div>
+                        <style>
+                            .author-content-item.map {
+                                background: url('https://mapsnap0.bdimg.com/it?qt=spg&c=315&coord=A|13225169.00,3748907.75;') no-repeat center;
+                                min-height: 160px;
+                                max-height: 400px;
+                                position: relative;
+                                overflow: hidden;
+                                margin-bottom: 0.5rem;
+                                height: 60%;
+                                background-size: 100%;
+                                transition: 1s ease-in-out;
+                            }
+                            
+                            .author-content-item.map:hover {
+                                background-size: 120%;
+                                transition: 4s ease-in-out;
+                                background-position-x: 0;
+                                background-position-y: 36%;
+                            }
+                            
+                            .author-content-item.map .map-title {
+                                position: absolute;
+                                bottom: 0px;
+                                left: 0px;
+                                width: 100%;
+                                background: var(--heo-maskbg);
+                                padding: 0.5rem 2rem;
+                                backdrop-filter: saturate(180%) blur(20px);
+                                -webkit-backdrop-filter: blur(20px);
+                                transition: 1s ease-in-out;
+                                font-size: 20px;
+                                border-radius: 0 0 1rem 1rem;
+                            }
+                            
+                            .author-content-item.map:hover .map-title {
+                                bottom: -100%;
+                                border-radius: 0 0 1rem 1rem;
+                            }
+                            
+                            .author-content-item.map .map-title b {
+                                color: var(--heo-fontcolor);
+                            }
+                            
+                            @media screen and (max-width: 768px) {
+                                .author-content-item.map.myphoto {
+                                    background-size: cover !important;
+                                }
+                                
+                                .author-content-item.map .map-title {
+                                    padding: 1rem;
+                                }
+                            }
+                        </style>
+                        <!-- 关于统计-->
+                        <script defer th:if="false">
+                            // 链接替换即可，不需要后面的参数
+                            function initAboutPage() {
+                                fetch("https://v6-widget.51.la/v6/ 这里要填ID /quote.js")
+                                        .then(res => res.text())
+                                        .then(data => {
+                                            let title = ["最近活跃", "今日人数", "今日访问", "昨日人数", "昨日访问", "本月访问", "总访问量"];
+                                            // let num = data.match(/(?<=<\/span><span>).*?(?=<\/span><\/p>)/g)
+                                            let num = data.match(/(<\/span><span>).*?(\/span><\/p>)/g);
+                                            
+                                            num = num.map(el => {
+                                                let val = el.replace(/(<\/span><span>)/g, "");
+                                                let str = val.replace(/(<\/span><\/p>)/g, "");
+                                                return str;
+                                            });
+                                            
+                                            let statisticEl = document.getElementById("statistic");
+                                            
+                                            // 自定义不显示哪个或者显示哪个，如下为不显示 最近活跃访客 和 总访问量
+                                            let statistic = [];
+                                            for (let i = 0; i < num.length; i++) {
+                                                if (!statisticEl) return;
+                                                if (i == 0) continue;
+                                                statisticEl.innerHTML +=
+                                                        "<div><span>" + title[i] + "</span><span id=" + title[i] + ">" + num[i] + "</span></div>";
+                                                queueMicrotask(() => {
+                                                    statistic.push(
+                                                            new CountUp(title[i], 0, num[i], 0, 2, {
+                                                                useEasing: true,
+                                                                useGrouping: true,
+                                                                separator: ",",
+                                                                decimal: ".",
+                                                                prefix: "",
+                                                                suffix: "",
+                                                            })
+                                                    );
+                                                });
+                                            }
+                                            
+                                            let statisticElement = document.querySelector(".about-statistic.author-content-item");
+                                            
+                                            function statisticUP() {
+                                                if (!statisticElement) return;
+                                                
+                                                const callback = (entries, observer) => {
+                                                    entries.forEach(entry => {
+                                                        if (entry.isIntersecting) {
+                                                            for (let i = 0; i < num.length; i++) {
+                                                                if (i == 0) continue;
+                                                                queueMicrotask(() => {
+                                                                    statistic[i - 1].start();
+                                                                });
+                                                            }
+                                                            observer.disconnect(); // 停止观察元素，因为不再需要触发此回调
+                                                        }
+                                                    });
+                                                };
+                                                
+                                                const options = {
+                                                    root: null,
+                                                    rootMargin: "0px",
+                                                    threshold: 0
+                                                };
+                                                const observer = new IntersectionObserver(callback, options);
+                                                observer.observe(statisticElement);
+                                            }
+                                            
+                                            statisticUP()
+                                        });
+                            }
+                            
+                            initAboutPage();
+                        
+                        </script>
+                    </div>
+                    <div class="author-content">
+                        <div class="create-site-post author-content-item single">
+                            <div class="author-content-item-tips">心路历程</div>
+                            <span class="author-content-item-title">为什么建站？</span><br>
+                            创建这个站的时候，想要就是能够有一个自己能够 <b>积累知识、积累兴趣</b> 的地方。
+                            和他人分享，会让这些成为积累和沉淀。如果能够帮助到更多的人，帮助更多人解决问题，那一定是非常棒的事情。<br>
+                            分享这件事我从很早就开始了，起初做的微信公众号，现在做的网站。因为我比较喜欢研究数码和软件，想要探究在互联网上的事物是如何被创造和发展。
+                            网络给我带来了非常多的知识和眼界，我也想力所能及的分享一些我生活的琐碎知识。<br>
+                            与大多数垂直类的技术博客不同，这里的种类会非常的繁杂，有 <b>技能的教程干货</b> 、有 <b>生活上的吐槽和妙招</b> 、有 <b>话题上的思考和想法</b> 。
+                            一般我研究什么、发现了什么都会分享在这里。<br> 这些就是创造这个小站的本意， <b>也是我分享生活的方式</b> 。有幸能和你相遇在这里，相信我们能共同留下一段美好记忆。
+                        </div>
+                    </div>
+                    <div class="author-content">
+                        <div class="create-site-post author-content-item single">
+                            <div class="author-content-item-tips">始终如一，不离不弃</div>
+                            <p>在这个十年中，我会用心感受生活的美好，用努力书写工作的篇章，用行动诠释人生的意义。这个进度条，不仅是数字的积累，更是我心中的期许和承诺。我相信，经过十年的坚持和努力，我会收获更多，成为一个更好的自己。</p>
+                            <div class="timeline">
+                                <div class="progress"></div>
+                                <div class="past-time"></div>
+                                <div class="percentage-label"></div>
+                            </div>
+                            <div class="time-labels">
+                                <div class="start-time"></div>
+                                <div class="end-time"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="author-content" xmlns:th="http://www.w3.org/1999/xhtml" th:if="false">
+                        <div class="author-content-item single reward" id="about-reward">
+                            <div class="author-content-item-tips">致谢</div>
+                            <span class="author-content-item-title">赞赏名单</span>
+                            <div class="author-content-item-description">感谢赞赏的人，因为你们，让我感受到写博客这件事情能够给你们创造价值。这会让我在这条路上走得更远。</div>
+                            <div class="about-reward">
+                                <div id="con"></div>
+                                <div id="TA-con" onclick="heo.rewardShowConsole()">
+                                    <div id="text-con">
+                                        <div id="linght"></div>
+                                        <div id="TA">赞赏作者</div>
+                                    </div>
+                                </div>
+                                <div id="tube-con">
+                                    <svg viewBox="0 0 1028 385" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M1 77H234.226L307.006 24H790" stroke="#e5e9ef" stroke-width="20"></path>
+                                        <path d="M0 140H233.035L329.72 71H1028" stroke="#e5e9ef" stroke-width="20"></path>
+                                        <path d="M1 255H234.226L307.006 307H790" stroke="#e5e9ef" stroke-width="20"></path>
+                                        <path d="M0 305H233.035L329.72 375H1028" stroke="#e5e9ef" stroke-width="20"></path>
+                                        <rect y="186" width="236" height="24" fill="#e5e9ef"></rect>
+                                        <ellipse cx="790" cy="25.5" rx="25" ry="25.5" fill="#e5e9ef"></ellipse>
+                                        <circle r="14" transform="matrix(1 0 0 -1 790 25)" fill="white"></circle>
+                                        <ellipse cx="790" cy="307.5" rx="25" ry="25.5" fill="#e5e9ef"></ellipse>
+                                        <circle r="14" transform="matrix(1 0 0 -1 790 308)" fill="white"></circle>
+                                    </svg>
+                                    <div id="mask">
+                                        <svg viewBox="0 0 1028 385" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 77H234.226L307.006 24H790" stroke="#f25d8e" stroke-width="20"></path>
+                                            <path d="M0 140H233.035L329.72 71H1028" stroke="#f25d8e" stroke-width="20"></path>
+                                            <path d="M1 255H234.226L307.006 307H790" stroke="#f25d8e" stroke-width="20"></path>
+                                            <path d="M0 305H233.035L329.72 375H1028" stroke="#f25d8e" stroke-width="20"></path>
+                                            <rect y="186" width="236" height="24" fill="#f25d8e"></rect>
+                                            <ellipse cx="790" cy="25.5" rx="25" ry="25.5" fill="#f25d8e"></ellipse>
+                                            <circle r="14" transform="matrix(1 0 0 -1 790 25)" fill="white"></circle>
+                                            <ellipse cx="790" cy="307.5" rx="25" ry="25.5" fill="#f25d8e"></ellipse>
+                                            <circle r="14" transform="matrix(1 0 0 -1 790 308)" fill="white"></circle>
+                                        </svg>
+                                    </div>
+                                    <div id="orange-mask">
+                                        <svg viewBox="0 0 1028 385" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M1 77H234.226L307.006 24H790" stroke="#ffd52b" stroke-width="20"></path>
+                                            <path d="M0 140H233.035L329.72 71H1028" stroke="#ffd52b" stroke-width="20"></path>
+                                            <path d="M1 255H234.226L307.006 307H790" stroke="#ffd52b" stroke-width="20"></path>
+                                            <path d="M0 305H233.035L329.72 375H1028" stroke="#ffd52b" stroke-width="20"></path>
+                                            <rect y="186" width="236" height="24" fill="#ffd52b"></rect>
+                                            <ellipse cx="790" cy="25.5" rx="25" ry="25.5" fill="#ffd52b"></ellipse>
+                                            <circle r="14" transform="matrix(1 0 0 -1 790 25)" fill="white"></circle>
+                                            <ellipse cx="790" cy="307.5" rx="25" ry="25.5" fill="#ffd52b"></ellipse>
+                                            <circle r="14" transform="matrix(1 0 0 -1 790 308)" fill="white"></circle>
+                                        </svg>
+                                    </div>
+                                    <p id="people">共<b>0</b>人</p>
+                                </div>
+                            </div>
+                            <div class="reward-list-all">
+                                <!-- 遍历下面的div -->
+                                <div class="reward-list-item">
+                                    <div>
+                                        <div>
+                                            <div class="reward-list-item-avatar">
+                                                <img src="" alt="头像">
+                                            </div>
+                                            <div style="z-index:20;float:left" class="reward-list-item-avatar-group">
+                                                <div class="reward-list-item-name">infanx</div>
+                                            </div>
+                                        </div>
+                                        <div class="reward-list-bottom-group">
+                                            <div class="reward-list-item-money" style="background: var(--heo-vip);">¥ 99</div>
+                                            <time class="datatime reward-list-item-time">2025/01/01</time>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <link rel="stylesheet" th:href="${assets_link + '/css/tenyear.css'}" media="all" onload="this.media='all'">
+                <script>
+                    (() => {
+                        let t = document.querySelector(".progress"),
+                            n = document.querySelector(".past-time"),
+                            o = document.querySelector(".percentage-label"),
+                            r = document.querySelector(".start-time"),
+                            s = document.querySelector(".end-time"),
+                            a = new Date("2020/03/04").getTime(),
+                            i = new Date("2030/03/04").getTime(),
+                            c = ((new Date).getTime() - a) / (i - a) * 100,
+                            u = c <= 100 ? c.toFixed(2) + "%" : "100%",  // 改成两位小数
+                            m = c <= 100 ? c.toFixed(2) + "%" : "已达标 ";  // 改成两位小数
+                        if (c < 7){m = "";}
+                        n.style.setProperty("--past-time-percentage", c + "%");
+                        t.style.setProperty("--progress-percentage", u);
+                        o.textContent = m;
+                        o.style.left = `calc(${c}% - 3rem)`;
+                        r.textContent = "" + new Date(a).toLocaleDateString();
+                        s.textContent = "" + new Date(i).toLocaleDateString();
+                        setTimeout(() => {
+                            o.style.visibility = "visible";
+                        }, 2500);
+                    })();
+                </script>                
+            </div>
+        </main>
+        <footer th:replace="~{modules/footer}"/>
+    </div>
+</th:block>
+</html>

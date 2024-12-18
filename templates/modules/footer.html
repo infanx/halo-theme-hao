@@ -1,0 +1,127 @@
+<!-- 页脚模块 Start -->
+<footer id="footer" xmlns:th="http://www.w3.org/1999/xhtml">
+    <!-- <div id="heo-footer-bar">
+        <div class="footer-logo"></div>
+        <div class="footer-bar-description"></div>
+        <a class="footer-bar-link" href="/" data-pjax-state="">了解更多</a>
+    </div> -->
+    <!-- 社交链接，需要填入 href class title -->
+    <div id="footer_deal">
+        <!-- <a class="deal_link" rel="external nofollow" target="_blank" href="" title="">
+            <i class=""></i>
+        </a> -->
+        <!-- <a class="custom_socials" rel="external nofollow" target="_blank" href="" title="">
+            <i class=""></i>
+        </a> -->
+        <img class="footer_mini_logo" th:with="img = @{${assets_link} + '/images/backToTop.svg'}" th:src="${isLazyload ? '' : img}" th:data-lazy-src="${ isLazyload ? img : ''}" title="返回顶部" onclick="btf.scrollToDest(0, 500)">
+        <!-- <a class="deal_link" rel="external nofollow" target="_blank" href="" title="">
+            <i class=""></i>
+        </a> -->
+    </div>
+
+    <!-- 页脚Nav -->
+    <div id="heo-footer">
+        <div class="footer-group" th:each="menuItem : ${menuFinder.getPrimary().menuItems}">
+            <h3 class="footer-title" th:text="${menuItem.status.displayName}"></h3>
+            <div class="footer-links">
+                <a class="footer-item" th:each="childMenu : ${menuItem.children}" th:href="@{${childMenu.status.href}}"
+                    th:target="${childMenu.spec.target?.value}" th:text="${childMenu.status.displayName}"></a>
+            </div>
+        </div>
+        <div class="footer-group">
+            <div class="footer-title-group">
+                <h3 class="footer-title">友链</h3>
+                <a class="random-friends-btn" id="footer-random-friends-btn"
+                    href="javascript:heo.addFriendLinksInFooter();" rel="external nofollow" title="换一换"
+                    data-pjax-state="external"><i class="haofont hao-icon-arrow-rotate-right"
+                        style="font-size: 16px;"></i></a>
+            </div>
+            <div class="footer-links" id="friend-links-in-footer"></div>
+        </div>
+    </div>
+    <!-- 底部 Banner -->
+    <halo:footer />
+    <div id="workboard"></div>
+    <span style="padding: 5px 5px;"></span>
+
+    <style>
+        .copyright,
+        #ghbdages,
+        #workboard {
+            text-align: center
+        }
+    </style>
+
+    <div id="footer-b" style="padding:1rem">
+        <div class="footer-b-links">
+            <div class="footer-b-left">
+                <div id="footer-b-tips">
+                    <div style="display:flex;flex-direction:row;align-items:center;margin-left:12px;">© 2020-[[${#dates.format(new java.util.Date(), 'yyyy')}]] By infanx</div>
+                </div>
+            </div>
+            <div class="footer-b-right">
+                <a class="footer-b-link" href="/rss.xml" target="_blank">订阅</a>
+                <a class="footer-b-link" href="/privacy" target="_blank">隐私</a>
+                <a class="footer-b-link" href="/license" target="_blank">CC协议</a>
+                <a class="footer-b-link" href="/sitemap.xml" target="_blank">网站地图</a><br>
+                <a class="footer-b-link cloud" href="https://www.aliyun.com/" rel="noopener external nofollow noreferrer noopener" target="_blank">本网站由<img th:src="${assets_link + '/images/aliyun.svg'}" alt="阿里云" height="16" style="padding:1.6px 2px 0 2px"/>提供计算服务</a>
+                <a class="footer-b-link" href="https://beian.miit.gov.cn/#/Integrated/index" rel="noopener external nofollow noreferrer noopener" target="_blank">苏ICP备2021050578号</a>
+                <!-- <a class="footer-b-link" href="http://www.beian.gov.cn/portal/registerSystemInfo" rel="noopener external nofollow noreferrer noopener" target="_blank">公网安备</a> -->
+                <a class="footer-b-link" href="https://icp.gov.moe/?keyword=20222066" target="_blank">萌ICP备20222066号</a>
+                <a class="footer-b-link cc" target="_blank" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh-hans" title="CC BY-NC-ND 4.0">
+                    <i class="haofont hao-icon-copyright-line" title="创意共享"></i>
+                    <i class="haofont hao-icon-creative-commons-by-line" title="署名"></i>
+                    <i class="haofont hao-icon-creative-commons-nc-line" title="非商业性使用"></i>
+                    <i class="haofont hao-icon-creative-commons-nd-line" title="禁止演绎"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- 右下角 Snackbar 弹窗 Start -->
+    <div class="needEndHide" id="cookies-window">
+        <div class="cookies-window-title">协议提醒助手</div>
+        <div class="cookies-window-content">
+            <span class="cookies-tip">查看本站为你的个人隐私做出的努力</span>
+            <a class="cookies-link" href="/privacy" title="本站如何保护你的隐私" data-pjax-state="">
+                <i class="bber-gotobb haofont hao-icon-circle-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+    <div id="quit-box" onclick="RemoveRewardMask()"></div>
+    <!-- 右下角 Snackbar 弹窗 End -->
+
+    <!--评论弹幕弹窗 -->
+    <div class="comment-barrage needEndHide" style="display: none;"></div>
+
+    <style>
+        a.footer-b-link.cloud {
+            display: flex;
+            align-items: center;
+        }
+
+        img.entered.loading.cloud {
+            height: 32px;
+        }
+    </style>
+
+    <th:block th:if="${theme.config.top.global_background.enable_global_background_img}">
+        <style>
+            @media screen and (min-width: 1300px) {
+                #footer {
+                    background: linear-gradient(180deg, var(--heo-card-bg-none) 0%, #fff0 25%);
+                    margin-top: 0.5rem;
+                    display: flex;
+                    flex-direction: column;
+                }
+            }
+
+            @media screen and (max-width: 1300px) {
+                #footer {
+                    background: linear-gradient(180deg, var(--heo-background) 0%, #fff0 25%);
+                    margin-top: 0;
+                    z-index: 3;
+                }
+            }
+        </style>
+    </th:block>
+</footer>
