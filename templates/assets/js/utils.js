@@ -14,7 +14,6 @@ var btf = {
             const dayCount = dateDiff / day;
             const hourCount = dateDiff / hour;
             const minuteCount = dateDiff / minute;
-
             if (monthCount >= 1) {
                 result = datePost.toLocaleDateString().replace(/\//g, "-");
             } else if (dayCount >= 1) {
@@ -33,7 +32,6 @@ var btf = {
     },
 
     loadLightbox: ele => {
-
         const jqLoadAndRun = () => {
             const $fancyboxEle = GLOBAL_CONFIG.lightbox === 'fancybox'
                 ? ele

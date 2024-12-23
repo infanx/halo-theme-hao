@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let menusWidth = $menusEle && $menusEle.offsetWidth
     const $searchEle = document.querySelector('#search-button')
     let searchWidth = $searchEle && $searchEle.offsetWidth
-
     const adjustMenu = (change = false) => {
         if (change) {
             blogNameWidth = $blogName && $blogName.offsetWidth
@@ -66,9 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
-    /**
-     * 首頁top_img底下的箭頭
-     */
+    // 首頁top_img底下的箭頭
     const scrollDownInIndex = () => {
         const $scrollDownEle = document.getElementById('scroll-down')
         const $homeTop = document.getElementById('home_top')
@@ -78,12 +75,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
-
-    /**
-     * justified-gallery 圖庫排版
-     * 需要 jQuery
-     */
-
+    // justified-gallery 圖庫排版需要 jQuery
     let detectJgJsLoad = false
     const runJustifiedGallery = function (ele) {
 
@@ -98,9 +90,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     * fancybox
-     */
+    // fancybox
     const addFancybox = function (ele) {
         const runFancybox = (ele) => {
             ele.each(function (i, o) {
@@ -147,9 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     *  toc
-     */
+    // toc
     const tocFn = function () {
         const postContent = document.querySelector('.post-content');
         if (postContent == null) return;
@@ -178,7 +166,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const $cardTocLayout = document.getElementById('card-toc')
             const $cardToc = $cardTocLayout.getElementsByClassName('toc-content')[0]
-
             // toc元素點擊
             $cardToc.addEventListener('click', (ele) => {
                 if (window.innerWidth < 900) {
@@ -189,10 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-
-    /**
-     * Rightside
-     */
+    // Rightside
     const rightSideFn = {
         switchReadMode: () => { // read-mode
             const $body = document.body
@@ -265,20 +249,16 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     })
 
-    /**
-     * 滾動處理
-     */
+    // 滾動處理
     const scrollFn = function () {
         const $postComment = document.getElementById('post-comment')
         const $rightside = document.getElementById('rightside')
         const innerHeight = window.innerHeight + 0
-
         if ($postComment) {
             $('#to_comment').attr('style', 'display: block');
         } else {
             $('#to_comment').attr('style', 'display: none');
         }
-
         // 當滾動條小于 0 的時候
         if (document.body.scrollHeight <= innerHeight) {
             $rightside.style.cssText = 'opacity: 1; transform: translateX(-58px)'
@@ -309,7 +289,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         isChatShow = true
                     }
                 }
-
 
                 $header.classList.add('nav-fixed')
                 if($cookies_window!=null && $cookies_window!=''){
@@ -364,9 +343,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
     }
 
-    /**
-     * 複製時加上版權信息
-     */
+    // 複製時加上版權信息
     const addCopyright = () => {
         const copyright = GLOBAL_CONFIG.copyright
         document.body.oncopy = (e) => {
@@ -390,9 +367,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     * 網頁運行時間
-     */
+    // 網頁運行時間
     const addRuntime = () => {
         const buildDate = "2020-03-04"; // 建站时间，直接写在这里
         const $runtimeCount = document.getElementById('runtimeshow');
@@ -405,9 +380,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
-    /**
-     * 最後一次更新時間
-     */
+    // 最後一次更新時間
     const addLastPushDate = () => {
         const $lastPushDateItem = document.getElementById('last-push-date')
         if ($lastPushDateItem) {
@@ -416,9 +389,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     * table overflow
-     */
+    // table overflow
     const addTableWrap = function () {
         const $table = document.querySelectorAll('#article-container :not(.highlight) > table, #article-container > table')
         if ($table.length) {
@@ -428,9 +399,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    /**
-     * tag-hide
-     */
+    // tag-hide
     const clickFnOfTagHide = function () {
         const $hideInline = document.querySelectorAll('#article-container .hide-button')
         if ($hideInline.length) {
@@ -535,7 +504,6 @@ document.addEventListener('DOMContentLoaded', function () {
         window.addEventListener('orientationchange', () => {
             setTimeout(adjustMenu(true), 100)
         })
-
         clickFnOfSubMenu()
         GLOBAL_CONFIG.lazyload.enable && lazyloadImg()
         GLOBAL_CONFIG.copyright !== undefined && addCopyright()
@@ -543,8 +511,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.refreshFn = function () {
         initAdjust();
-
-
         if (GLOBAL_CONFIG.isPost) {
             addRuntime();
             tocFn();
@@ -553,7 +519,6 @@ document.addEventListener('DOMContentLoaded', function () {
             toggleCardCategory()
             addRuntime()
         }
-
         sidebarFn()
         GLOBAL_CONFIG.isHome && scrollDownInIndex()
         scrollFn()
@@ -563,7 +528,6 @@ document.addEventListener('DOMContentLoaded', function () {
         tabsFn.backToTop()
         jqLoadAndRun()
     }
-
     refreshFn()
     unRefreshFn()
 })

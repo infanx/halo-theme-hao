@@ -21,7 +21,7 @@
                 <!-- 默认样式 Start -->
                 <div id="album" th:if="true">
                     <div th:replace="~{modules/author-content :: author-content(
-                        background = '',
+                        background = ${assets_link} + '/images/background/hk-night.webp',
                         smallTitle = '相册集',
                         bigTitle = '这里是我的相册集哦😯',
                         detail = '每一张照片都是一次美好的记忆。',

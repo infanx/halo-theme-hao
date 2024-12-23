@@ -180,6 +180,7 @@ spec:
         - $formkit: url
           name: postRandomImg
           label: 随机封面
+          value: https://picsum.photos/800/600
     - group: post
       label: 文章
       formSchema:
@@ -793,27 +794,6 @@ spec:
       label: 其他设置
       formSchema:
         - $formkit: group
-          name: staticResource
-          label: 静态资源文件
-          value:
-            use: local
-          children:
-            - $formkit: select
-              name: use
-              id: use
-              key: use
-              label: 类型选择
-              options:
-                - label: 本地
-                  value: local
-                - label: 自定义
-                  value: custom
-            - $formkit: url
-              name: cdn_link
-              if: "$get(use).value == 'custom'"
-              label: CDN地址
-              validation: required
-        - $formkit: group
           name: opengraph
           label: Open Graph
           children:
@@ -825,8 +805,8 @@ spec:
           label: 懒加载
           value:
             enable: true
-            errorImg: "/themes/infanx/assets/images/404.gif"
-            loadingImg: /themes/infanx/assets/images/404s.gif
+            errorImg: "/themes/infanx/assets/images/404.svg"
+            loadingImg: /themes/infanx/assets/images/loading.svg
           children:
             - $formkit: radio
               name: enable

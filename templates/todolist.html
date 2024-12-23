@@ -18,7 +18,8 @@
         </header>
         <main class="layout hide-aside" id="content-inner">
             <div id="page">
-                <div th:replace="~{modules/author-content :: author-content(background = ${assets_link + '/images/background-toDoList.jpg'},
+                <div th:replace="~{modules/author-content :: author-content(
+                        background = ${assets_link} + '/images/background/background-toDoList.webp',
                         smallTitle = '清单',
                         bigTitle = ${singlePage.spec.title},
                         detail = ${singlePage.spec.excerpt.raw},

@@ -7,22 +7,16 @@ let halo = {
             else
                 commentDOMclass.replace('dark', 'light')
         }
-
     },
 
     dataCodeTheme: () => {
-
         var t = document.documentElement.getAttribute('data-theme')
         var e = document.querySelector("link[data-code-theme=light]"),
             o = document.querySelector("link[data-code-theme=dark]");
         (o || e) && ("light" === t ? (o.disabled = !0, e.disabled = !1) : (e.disabled = !0, o.disabled = !1))
-
     },
 
-    /**
-     * 代码
-     * 只适用于halo的代码渲染
-     */
+    // 代码只适用于halo的代码渲染
     addPrismTool: () => {
         if (typeof Prism === 'undefined' || typeof document === 'undefined') {
             return;
@@ -30,7 +24,6 @@ let halo = {
 
         if (!Prism.plugins.toolbar) {
             console.warn('Copy to Clipboard plugin loaded before Toolbar plugin.');
-
             return;
         }
 
@@ -45,17 +38,14 @@ let halo = {
         const isEnableHeightLimit = GLOBAL_CONFIG.prism.enable_height_limit;
 
         // https://stackoverflow.com/a/30810322/7595472
-
         /** @param {CopyInfo} copyInfo */
         function fallbackCopyTextToClipboard(copyInfo) {
             var textArea = document.createElement('textarea');
             textArea.value = copyInfo.getText();
-
             // Avoid scrolling to bottom
             textArea.style.top = '0';
             textArea.style.left = '0';
             textArea.style.position = 'fixed';
-
             document.body.appendChild(textArea);
             textArea.focus();
             textArea.select();
@@ -131,18 +121,14 @@ let halo = {
         }
 
         var r = Prism.plugins.toolbar.hook = function (a) {
-
-
             var r = a.element.parentNode;
             var toolbar = r.nextElementSibling;
-
             //标题
             isEnableTitle && toolbar.classList.add("c-title")
             //标题分割线
             isEnableHr && toolbar.classList.add("c-hr")
             var customItem = document.createElement("div");
             customItem.className = 'custom-item absolute top-0'
-
             //复制
             if (isEnableCopy) {
                 var copy = document.createElement("i");
@@ -166,13 +152,10 @@ let halo = {
                             setTimeout(function () {
                                 selectElementText(a.element);
                             }, 1);
-
                             resetText();
                         }
                     });
-
                 });
-
             }
 
             const prismToolsFn = function (e) {
@@ -185,10 +168,7 @@ let halo = {
                 var expander = document.createElement("i");
                 expander.className = 'fa-sharp fa-solid haofont hao-icon-angle-down code-expander cursor-pointer'
                 customItem.appendChild(expander)
-
                 expander.addEventListener('click', prismToolsFn)
-
-
             }
 
             const expandCode = function () {
@@ -198,7 +178,6 @@ let halo = {
             };
 
             if (isEnableHeightLimit && r.offsetHeight > prismLimit) {
-
                 r.classList.add("close")
                 const ele = document.createElement("div");
                 ele.className = "code-expand-btn";
@@ -222,15 +201,10 @@ let halo = {
                         r.offsetParent.lastElementChild.style.display = "block";
                     }
                 }
-
             };
 
-
             toolbar.appendChild(customItem)
-
             var settings = getSettings(a.element);
-
-
             function resetText() {
                 setTimeout(function () {
                     setState('copy');
@@ -288,7 +262,6 @@ let halo = {
                                         avatar: e.avatar,
                                         content: e.nick + "：" + btf.changeContent(e.comment),
                                         href: e.url + '#' + e.id
-
                                     })
                             }
                         )),
@@ -317,7 +290,6 @@ let halo = {
                                     avatar: 'https://cravatar.cn/avatar/' + e.email_encrypted + '?d=mp&s=240',
                                     content: e.nick + "：" + btf.changeContent(e.content_marked),
                                     href: e.page_url + '#atk-comment-' + e.id
-
                                 })
                             }
                         )),
@@ -346,7 +318,6 @@ let halo = {
                 if (typeof Waline === 'object') loadWaline()
                 else getScript(GLOBAL_CONFIG.source.waline.js).then(loadWaline)
             }
-
         }
         document.getElementById("danmuBtn").innerHTML = "<button class=\"hideBtn\" onclick=\"document.getElementById('danmu').classList.remove('hidedanmu')\">显示弹幕</button> <button class=\"hideBtn\" onclick=\"document.getElementById('danmu').classList.add('hidedanmu')\">隐藏弹幕</button>"
     },
@@ -357,10 +328,7 @@ let halo = {
     },
 
     getTopSponsors() {
-
         var show_num = GLOBAL_CONFIG.source.power.showNum
-
-
         function getPower() {
             const url = "/apis/api.plugin.halo.run/v1alpha1/plugins/plugin-afdian/afdian/getSponsorList"
             fetch(url)
@@ -372,10 +340,8 @@ let halo = {
                         saveToLocal.set('power-data', JSON.stringify(values), 10 / (60 * 24))
                         renderer(values);
                     }
-
                 })
         }
-
         function renderer(values) {
             var data = getArrayItems(values, 1);
             let powerStar = document.getElementById("power-star")
@@ -425,7 +391,6 @@ let halo = {
                 getPower()
             }
         }
-
         document.getElementById("power-star") && init()
     }
     ,
@@ -442,5 +407,4 @@ let halo = {
             }
         }
     },
-
 }

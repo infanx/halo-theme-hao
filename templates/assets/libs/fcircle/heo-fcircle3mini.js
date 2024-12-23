@@ -1,8 +1,3 @@
-/*
-Last Modified time : 20220211 15:38 by https://immmmm.com
-已适配 FriendCircle 公共库和主库
-*/
-
 //默认数据
 var fdata = {
     jsonurl: '',

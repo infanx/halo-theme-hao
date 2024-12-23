@@ -39,7 +39,6 @@ var heo = {
         }
     },
 
-
     // 只在首页显示
     onlyHome: function () {
         var urlinfo = window.location.pathname;
@@ -60,7 +59,6 @@ var heo = {
             return false;
         }
     },
-
 
     //监测是否在页面开头
     addNavBackgroundInit: function() {
@@ -195,7 +193,6 @@ var heo = {
                 document.getElementById("author-info__sayhi").innerHTML = getTimeState();
             }
         }
-
     },
 
     // 二维码
@@ -499,7 +496,6 @@ var heo = {
             }
             //首页有第一屏就跳转指定位置
             scrollToPost();
-
         }
     },
     changeSayHelloText: function() {
@@ -612,14 +608,12 @@ var heo = {
         document.documentElement.classList.contains("hide-aside") ? document.querySelector("#consoleHideAside").classList.add("on") : document.querySelector("#consoleHideAside").classList.remove("on")
     },
 
-
     // 音乐节目切换背景
     changeMusicBg: function (isChangeBg = true) {
         if (window.location.pathname != "/music") {
             return;
         }
         const anMusicBg = document.getElementById("an_music_bg");
-
         if (isChangeBg) {
             // player listswitch 会进入此处
             const musiccover = document.querySelector("#anMusic-page .aplayer-pic");

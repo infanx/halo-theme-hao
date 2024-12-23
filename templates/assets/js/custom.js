@@ -1,5 +1,3 @@
-
-
 /* 获取直属子元素 */
 function getChildren(el, className) {
     for (let item of el.children) if (item.className === className) return item;
@@ -29,10 +27,8 @@ function extractHeight(occupied, width, height) {
     }
 }
 
-
 // 跳转链接的卡片
 document.addEventListener("DOMContentLoaded", () => {
-
     // 分栏 tab
     customElements.define(
         "hao-tabs",
@@ -81,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
                    <ul class="nav-tabs">${navs}</ul>
                    <div class="tab-contents">${contents}</div>
                 </div>
-        
             `;
                 this.innerHTML = htmlStr;
             }
@@ -144,7 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     );
-
 
     // B站视频
     customElements.define(
@@ -281,7 +275,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-
     // 链接卡片 link
     customElements.define(
         "hao-tag-link",
@@ -325,7 +318,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-
     // Note (Bootstrap Callout)
     customElements.define(
         "hao-note",
@@ -342,7 +334,6 @@ document.addEventListener("DOMContentLoaded", () => {
             `;
                 this.innerHTML = htmlStr;
             }
-
         }
     );
 
@@ -364,7 +355,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         }
     );
-
 
     // timeline
     customElements.define(
@@ -397,7 +387,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                 );
                 let htmlStr = `
-
 					<div class="timeline ${this.options.color}">
 						<div class="timeline-item headline">
 							<div class="timeline-item-title">
@@ -407,15 +396,12 @@ document.addEventListener("DOMContentLoaded", () => {
 							</div>
 						</div>
 						${content}
-						
 					</div>
-			
 				`;
                 this.innerHTML = htmlStr;
             }
         }
     );
-
 
     // 按钮 btns
     customElements.define(
@@ -567,7 +553,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-
     // flink 友链标签
     customElements.define(
         "hao-flink",
@@ -595,7 +580,6 @@ document.addEventListener("DOMContentLoaded", () => {
                                     <a class="img" target="_blank" href="${flink[1]}" title="${flink[0]}">
                                         <img class="flink-avatar entered loaded" style="pointer-events: none;" alt="${flink[0]}" ${GLOBAL_CONFIG.source.img.src}="${flink[4] || flink[2]}" >
                                     </a>
-
                                     <a class="info cf-friends-link" target="_blank" href="${flink[1]}" title="${flink[0]}">
                                         <div class="site-card-avatar no-lightbox">
                                             <img class="flink-avatar cf-friends-avatar" alt="${flink[0]}" ${GLOBAL_CONFIG.source.img.src}="${flink[2]}">
@@ -656,7 +640,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     );
 
-
     // 复选列表 checkbox
     customElements.define(
         "hao-checkbox",
@@ -667,14 +650,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     class: this.getAttribute("class") || '',
                     colour: this.getAttribute("colour") || '',
                     status: this.getAttribute("status") || ''
-
                 };
                 let htmlStr = `
                 <div class="checkbox ${this.options.class} ${this.options.colour} ${this.options.status}"><input type="checkbox" ${this.options.status}><p>${this.innerHTML.trim().replace(/^(<br>)|(<br>)$/g, "")}</p></div>
             `;
                 this.innerHTML = htmlStr;
             }
-
         }
     );
 
@@ -699,7 +680,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 `;
                 this.innerHTML = htmlStr;
             }
-
         }
     );
 
