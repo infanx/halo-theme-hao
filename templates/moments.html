@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{modules/layout :: layout(content = ~{::content}, htmlType = 'moments',title = ${title + ' | ' + site.title}, head = ~{::head}, _title = ${title})}">
+<th:block th:fragment="head">
+    <th:block th:replace="~{modules/open-graph :: open-graph(_title = ${_title},
+                _permalink = '/moments',
+                _cover = ${theme.config.other.opengraph.image},
+                _excerpt = ${site.seo.description},
+                _type = 'website')}"></th:block>
+</th:block>
+<th:block th:fragment="content">
+
+    <div class="page" id="body-wrap">
+
+        <!-- 头部导航栏 -->
+        <header class="not-top-img" id="page-header">
+            <nav th:replace="~{modules/nav :: nav(title = ${_title})}"></nav>
+        </header>
+        <main class="layout hide-aside" id="content-inner">
+            <div id="page">
+                <div class="author-content author-content-item essayPage single" th:style="'background:url(' + ${assets_link} + '/images/background/nj-light.webp) left 45% / cover no-repeat'">
+                    <div class="card-content">
+                        <div class="author-content-item-tips">即刻短文</div>
+                        <span class="author-content-item-title">分享生活的小确幸</span>
+                        <div class="content-bottom">
+                            <div class="tips">本页面由 Moment 插件构建</div>
+                        </div>
+                        <div class="banner-button-group">
+                            <a class="banner-button" href="/">
+                                <i class="haofont hao-icon-circle-arrow-right"></i>
+                                <span class="banner-button-text">返回首页</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div id="bber">
+                    <section class="timeline page-1">
+                        <ul class="list" id="waterfall">
+                            <li class="item" th:each="moment : ${moments.items}"
+                                th:with="content=${moment.spec.content}">
+                                <div class="bber-content">
+                                    <div class="datacont" th:if="${not #strings.isEmpty(content.html)}"
+                                         th:utext="${content.html}">
+                                    </div>
+                                    <th:block th:if="${not #lists.isEmpty(content.medium)}">
+                                        <div class="bber-container-img"
+                                             th:if="${#strings.contains(content.medium,'PHOTO')}">
+                                            <img th:each="momentItem : ${content.medium}"
+                                                 th:if="${momentItem.type.name == 'PHOTO'}"
+                                                 th:src="${isLazyload ? loadingImg : momentItem.url}"
+                                                 th:data-lazy-src="${ isLazyload ? momentItem.url : ''}" title="瞬间配图">
+                                            <div class="bber-content-noimg"></div>
+                                            <div class="bber-content-noimg"></div>
+                                            <div class="bber-content-noimg"></div>
+                                        </div>
+                                        <div th:each="momentItem : ${content.medium}" class="bber-music"
+                                             th:if="${momentItem.type.name == 'VIDEO'}">
+                                            <video th:src="${momentItem.url}"></video>
+                                        </div>
+                                    </th:block>
+                                </div>
+
+                                <hr>
+                                <div class="bber-bottom">
+                                    <div class="bber-info">
+                                        <div class="bber-info-time"><i class="haofont hao-icon-clock"></i>
+                                            <time class="datatime"
+                                                  th:text="${#dates.format(moment.spec.releaseTime,'yyyy-MM-dd')}"></time>
+                                        </div>
+                                    </div>
+                                    <a class="bber-reply" th:if="${theme.config.comments.use != 'commentWidget'}"
+                                       th:onclick="rightMenuCommentText([[${content.html}]]);"
+                                       data-pjax-state=""> <i class="haofont hao-icon-chat--fill"
+                                                              style="font-size: 20px;"></i>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </section>
+                    <!--  分页还没写 -->
+                </div>
+                <div id="bber-tips" style="color: var(--heo-secondtext);">- 只展示最近30条短文 -</div>
+                <script>heo.reflashEssayWaterFall();</script>
+                <hr th:if="${theme.config.comments.use != 'commentWidget'}" />
+                <!--/* 评论组件 */-->
+                <th:block th:replace="~{modules/comment :: comment(group = 'content.halo.run',
+                  kind = 'SinglePage',
+                  name = 'moments',
+                  allowComment = ${theme.config.comments.use != 'commentWidget'})}" />
+            </div>
+
+        </main>
+        <!-- 底部 -->
+        <footer th:replace="~{modules/footer}"/>
+        <!-- 卡片顶部气泡效果 -->
+        <script th:if="${theme.config.other.bubbleEnable}" async data-pjax
+                th:src="${assets_link + '/libs/canvas/bubble.js'}"></script>
+    </div>
+
+</th:block>
+
+</html>

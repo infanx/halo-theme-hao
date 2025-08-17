@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" th:replace="~{modules/layout :: layout(content = ~{::content}, htmlType = ${error.status}, title = ${error.status} + ' ' + ${error.title}, head = null)}">
+<th:block th:fragment="content">
+    <div class="page" id="body-wrap">
+        <div class="errors">
+            <div>
+                <header class="not-top-img" id="page-header">
+                    <nav th:replace="~{modules/nav :: nav(title = ${error.title})}"></nav>
+                </header>
+            </div>
+            <div id="error-wrap">
+                <div class="error-content">
+                    <div class="error-info">
+                        <h1 class="error_title" th:text="${error.status}"></h1>
+                        <div class="error_subtitle" th:text="${#strings.defaultString(error.title, 'Internal server error')}"></div>
+                        <a class="button--animated" href="/" data-pjax-state=""><i class="fas fa-rocket"></i>回到主页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+</html>

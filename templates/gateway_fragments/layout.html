@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html th:lang="${#locale.toLanguageTag}" th:fragment="layout(title, head, body)" xmlns:th="http://www.thymeleaf.org"
+      th:with="assets_link = ${#theme.assets('/')},
+      theme_version = ${'?v=' + theme.spec.version},
+      isLazyload = ${theme.config.other.vanillaLazyload.enable},
+      loadingImg = ${theme.config.other.vanillaLazyload.loadingImg},
+      siteTitle = ${not #strings.isEmpty(title) ?  title  :  #strings.isEmpty(site.subtitle) ? site.title :  site.title +' - ' + site.subtitle }">
+<head>
+    <th:block th:replace="~{modules/head :: head(htmlType = login)}"/>
+    <link th:if="${#strings.equals(theme.config.comments.use, 'Waline') && not #strings.isEmpty(theme.config.comments.walines.serverURL)}" rel="stylesheet" th:href="${not #strings.isEmpty(theme.config.comments.walines.walinesCss) ? theme.config.comments.walines.walinesCss : 'https://cdn.cbd.int/@waline/client@2.15.7/dist/waline.css' }">
+    <!--  解决 katex pjax问题 -->
+    <script th:if="${pluginFinder.available('plugin-katex')}" defer="" src="/plugins/plugin-katex/assets/static/katex.min.js"></script>
+    <script th:src="${assets_link + '/js/custom.js'}"></script>
+    <th:block th:if="${head != null}">
+        <th:block th:replace="${head}"/>
+    </th:block>
+    <link rel="preload" href="/images/wordmark.svg" as="image" type="image/svg+xml" />
+    <link rel="preload" href="/images/logo.png" as="image" type="image/png" />
+    <th:block th:replace="~{gateway_fragments/common::basicStaticResources}"></th:block>
+    <style>
+        .signup-page-wrapper {
+            max-width: 38em;
+        }
+        .logout-page-wrapper .user-info {
+            border-radius: var(--rounded-lg);
+            padding: var(--spacing-xs);
+            gap: var(--spacing-lg);
+            display: flex;
+            margin-bottom: 2em;
+            align-items: center;
+            border: 1px dashed #dfe6ecb3;
+        }
+
+        .logout-page-wrapper .user-avatar {
+            width: 4em;
+            border-radius: 100%;
+        }
+
+        .logout-page-wrapper .user-details {
+            color: var(--color-text);
+            font-size: var(--text-sm);
+            gap: var(--spacing-xs);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .logout-page-wrapper .user-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .logout-page-wrapper .cancel-link {
+            color: var(--color-link);
+            font-size: var(--text-sm);
+            text-decoration: none;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Loading 页面 Start -->
+    <style type="text/css">
+        #loading-box {
+            -webkit-user-select: none;
+        }
+        #loading-box .loading-bg {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            background: var(--heo-card-bg);
+            z-index: 1999;
+            opacity: 1;
+            transition: 0.2s;
+            pointer-events: all;
+            animation: showLoading 0.3s 0s backwards;
+        }
+        #loading-box.loaded .loading-bg {
+            pointer-events: none;
+            transition: 0.2s;
+            animation: hideLoading 0.3s 0s forwards;
+        }
+        #loading-box .loading-img {
+            width: 100px;
+            margin: auto;
+            animation-duration: 0.2s;
+            animation-name: loadingAction;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+        }
+        #loading-box .loading-image-dot {
+            width: 30px;
+            height: 30px;
+            background: #6bdf8f;
+            position: absolute;
+            border-radius: 50%;
+            border: 6px solid #fff;
+            top: 50%;
+            left: 50%;
+            -webkit-transform: translate(18px, 24px);
+            -moz-transform: translate(18px, 24px);
+            -o-transform: translate(18px, 24px);
+            -ms-transform: translate(18px, 24px);
+            transform: translate(18px, 24px);
+        }
+        @keyframes loadingAction {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0.6;
+            }
+        }
+        @keyframes hideLoading {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+        @keyframes showLoading {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+    <div id="loading-box" onclick="heo.hideLoading()">
+        <div class="loading-bg">
+            <img class="loading-img" style="border-radius: 50%;" th:src="${theme.config.other.loadingBoxs.loadingBoxImg}">
+            <div class="loading-image-dot"></div>
+        </div>
+    </div>
+    <script>
+        var preloader = {
+            endLoading: () => {
+                //- document.body.style.overflow = 'auto';
+                document.getElementById('loading-box').classList.add("loaded")
+            },
+            initLoading: () => {
+                //- document.body.style.overflow = '';
+                document.getElementById('loading-box').classList.remove("loaded")
+            }
+        }
+        window.addEventListener('load', preloader.endLoading())
+        setTimeout(function () {
+            preloader.endLoading();
+        }, 3000)
+    </script>
+    <!-- Loading 页面 End -->
+
+    <!-- 网站背景 -->
+    <div id="web_bg">
+        <div th:if="${theme.config.top.global_background.enable_global_background_img}">
+            <img th:if="${theme.config.top.global_background.enable_global_background_above_video == false}" class="global_background_img" th:src="${theme.config.top.global_background.global_background_img}">
+            <video th:if="${theme.config.top.global_background.enable_global_background_above_video}" class="index-video" id="index-video" autoplay="" th:src="${theme.config.top.global_background.global_background_video}" loop="" muted="" playsinline="" webkit-playsinline="" style="display:block;object-fit:cover;width:100%;height:100%;pointer-events:none"></video>
+        </div>
+    </div>
+    <style th:if="${theme.config.top.global_background.enable_global_background_img}">
+        @media screen and (min-width: 1300px) {
+            .global_background_img {
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+                opacity: 1;
+                position: fixed;
+                z-index: -999;
+                background: var(--heo-background);
+                background-attachment: fixed;
+                background-repeat: no-repeat;
+                background-size: cover;
+            }
+        }
+        @media screen and (max-width: 1300px) {
+            .global_background_img {
+                display: none;
+            }
+        }
+    </style>
+    <script th:inline="javascript">
+        function toRandomPost() {
+            // 随机跳转首页的一篇文章
+            // 后续改成跳转全站的文章，可以从 sitemap 中获取所有文章
+            let posts = [[${posts}]];
+            let datum = posts.total < posts.size ? posts.total : posts.size;
+            let number = Math.floor(Math.random() * datum);
+            let post = posts.items[number];
+            // 当前窗口打开
+            //window.location.href = post.status.permalink;
+            pjax.loadUrl(post.status.permalink)
+            // window.open(post.status.permalink);
+        }
+    </script>
+
+    <!-- 网站背景 -->
+    <div id="an_music_bg"></div>
+
+    <!-- 控制台 Start -->
+    <div id="console">
+        <div class="close-btn" onclick="heo.hideConsole()" href="javascript:void(0);">
+            <i class="haofont hao-icon-circle-xmark"></i>
+        </div>
+        <div class="console-card-group">
+            <div class="console-card-group-left">
+                <div class="console-card" id="card-newest-comments" onclick="heo.hideConsole()">
+                    <div class="card-content">
+                        <div class="author-content-item-tips">互动</div>
+                        <span class="author-content-item-title">最近评论</span>
+                    </div>
+                    <div class="aside-list">
+                        <th:block th:if="${#strings.equals(theme.config.comments.use, 'commentWidget') }">
+                            <!-- BUG：由于当前的列出所有评论API无过滤功能，非文章页的评论无法查询到页面信息，所以非文章评论跳转至首页-->
+                            <div class="aside-list-item" th:each="comment,iterStat : ${commentFinder.list(null, 1, 20)}" th:with="page = ${comment.spec.subjectRef.kind == 'Post' ? postFinder.getByName(comment.spec.subjectRef.name) : comment.spec.subjectRef.kind == 'SinglePage' && not #strings.contains('photos,links,moments', comment.spec.subjectRef.name) ? singlePageFinder.getByName(comment.spec.subjectRef.name) : null}, url = ${page == null? '/' : page.status.permalink + '#comment-' + comment.metadata.name}" th:if="${iterStat.index < 6}">
+                                <a th:href="${url}" class="thumbnail" data-pjax-state="">
+                                    <img th:with="img = ${#strings.isEmpty(comment.owner.avatar)?'https://cravatar.cn/avatar/?d=mp':comment.owner.avatar}" th:src="${isLazyload ? loadingImg : img}" th:data-lazy-src="${ isLazyload ? img : ''}" th:alt="${comment.owner.displayName}">
+                                    <div class="name"><span>stonewu</span></div>
+                                </a>
+                                <div class="content">
+                                    <a class="comment" th:href="${url}" th:title="${comment.spec.content}" data-pjax-state="" th:text="${comment.spec.content}"></a>
+                                    <time th:datetime="${#dates.format(comment.metadata.creationTimestamp, 'yyyy-MM-dd HH:mm:ss')}"></time>
+                                </div>
+                            </div>
+                            <script data-pjax>
+                                window.addEventListener('load', () => {
+                                    $(".aside-list time").each(function () {
+                                        var timeVal = $(this).attr("datetime");
+                                        $(this).text(btf.diffDateExact(timeVal, true));
+                                    })
+                                });
+                            </script>
+                        </th:block>
+                        <span th:if="${#strings.equals(theme.config.comments.use, 'Twikoo') }">正在加载中...</span>
+                    </div>
+                </div>
+            </div>
+            <!-- 右侧展示 tag -->
+            <div class="console-card-group-right">
+                <div class="console-card tags" onclick="heo.hideConsole()">
+                    <div class="card-content">
+                        <div class="author-content-item-tips">标签</div>
+                        <span class="author-content-item-title">寻找感兴趣的领域</span>
+                    </div>
+                    <div class="card-tag-cloud" th:with="tags = ${tagFinder.list(1,10)}">
+                        <a style="font-size:1em;color:#d3d3d3" th:each="tag,iterStat : ${tags}" th:href="@{${tag.status.permalink}}">
+                            [[${tag.spec.displayName}]]<sup th:text="${tag.status.visiblePostCount}"></sup>
+                        </a>
+                    </div>
+                </div>
+                <!-- 底部展示时间归档 -->
+                <div class="console-card history" onclick="heo.hideConsole()">
+                    <div class="item-headline"><i class="fas fa-archive"></i><span>文章</span></div>
+                    <ul class="card-archive-list" th:with="archives = ${postFinder.archives(1,0)}">
+                        <th:block th:each="archive : ${archives.items}">
+                            <li class="card-archive-list-item" th:each="month,monthStat : ${archive.months}">
+                                <a class="card-archive-list-link"
+                                    th:href="@{'/archives/'+${archive.year}+'/'+${month.month}}"
+                                    data-pjax-state="load"><span class="card-archive-list-date">
+                                        [[${(month.month == '01') ? '一月' :
+                                        (month.month == '02') ? "二月" :
+                                        (month.month == '03') ? "三月" :
+                                        (month.month == '04') ? "四月" :
+                                        (month.month == '05') ? "五月" :
+                                        (month.month == '06') ? "六月" :
+                                        (month.month == '07') ? "七月" :
+                                        (month.month == '08') ? "八月" :
+                                        (month.month == '09') ? "九月" :
+                                        (month.month == '10') ? "十月" :
+                                        (month.month == '11') ? "十一月" : "十二月"}]] [[${archive.year}]]
+                                    </span>
+                                    <div class="card-archive-list-count-group">
+                                        <span class="card-archive-list-count">[[${month.posts.size()}]]</span>
+                                        <span class="card-archive-list-count-unit">篇</span>
+                                    </div>
+                                </a>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="console-card-group-reward" th:if="false">
+            <ul class="reward-all console-card">
+                <li class="reward-item">
+                    <a href="" rel="external nofollow noreferrer" target="_blank" draggable="false">
+                        <img class="entered loaded" alt="微信" src="">
+                    </a>
+                    <div class="post-qr-code-desc">微信</div>
+                </li>
+                <li class="reward-item">
+                    <a href="" rel="external nofollow noreferrer" target="_blank" draggable="false">
+                        <img class="entered loaded" alt="支付宝" src="">
+                    </a>
+                    <div class="post-qr-code-desc">支付宝</div>
+                </li>
+            </ul>
+        </div>
+        <div class="button-group">
+            <div class="console-btn-item">
+                <a class="darkmode_switchbutton" href="javascript:void(0);" onclick="navFn.switchDarkMode();"
+                    rel="external nofollow" title="显示模式切换">
+                    <i class="haofont hao-icon-moon-clear-fill" style="font-size:1rem"></i>
+                </a>
+            </div>
+            <div class="console-btn-item" id="consoleHideAside" onclick="heo.hideAsideBtn()" title="边栏显示控制">
+                <a class="asideSwitch" data-pjax-state="">
+                    <i class="haofont hao-icon-arrows-left-right"></i>
+                </a>
+            </div>
+            <div class="console-btn-item on" id="consoleCommentBarrage" onclick="heo.switchCommentBarrage()" title="热评开关">
+                <a class="commentBarrage" data-pjax-state="">
+                    <i class="haofont hao-icon-chat--fill"></i>
+                </a>
+            </div>
+            <!-- <div class="console-btn-item" id="consoleKeyboard" onclick="heo.keyboardToggle()" title="快捷键开关">
+        <a class="keyboard-switch">
+            <i class="fa-duotone fa-keyboard"></i>
+        </a>
+        </div> -->
+            <!-- <div class="console-btn-item" id="assist-open" onclick="heo.hideConsole()" title="无障碍工具栏">
+        <a class="assist-btn">
+            <i class="fa-duotone fa-wheelchair"></i>
+        </a>
+        </div> -->
+            <div class="console-btn-item" id="consoleMusic"
+                onclick="heo.musicToggle()" title="音乐开关">
+                <a class="music-switch" data-pjax-state="">
+                    <i class="haofont hao-icon-disc-fill"></i>
+                </a>
+            </div>
+        </div>
+        <div class="console-mask" href="javascript:void(0);" onclick="heo.hideConsole()" rel="external nofollow"></div>
+    </div>
+    <!-- 控制台 End -->
+
+    <!-- 侧栏 Start -->
+    <div id="sidebar">
+        <div id="menu-mask"></div>
+        <div id="sidebar-menus">
+            <span class="sidebar-menu-item-title">功能</span>
+            <div class="sidebar-menu-item">
+                <a class="darkmode_switchbutton menu-child" href="javascript:void(0);" onclick="rm.switchDarkMode()" rel="external nofollow" title="显示模式切换">
+                    <i class="haofont hao-icon-moon" style="font-size: 0.9rem;"></i>
+                    <span>显示模式</span>
+                </a>
+            </div>
+                <!-- <div class="back-menu-list-groups">
+                    <div class="back-menu-list-group" th:each="menuItem : ${menuFinder.getPrimary().menuItems}">
+                        <th:block th:if="${not #lists.isEmpty(menuItem.children)}">
+                            <div class="back-menu-list-title" th:text="${menuItem.status.displayName}"></div>
+                            <div class="back-menu-list">
+                                <th:block th:each="childMenu : ${menuItem.children}">
+                                    <a class="back-menu-item" rel="external nofollow"
+                                    target="_blank" th:href="@{${childMenu.status.href}}">
+                                        <img th:if="${!#strings.isEmpty(#annotations.getOrDefault(childMenu, 'icon', ''))}"
+                                            class="back-menu-item-icon"
+                                            th:src="${#annotations.getOrDefault(childMenu, 'icon', '')}">
+                                        <span class="back-menu-item-text" th:text="${childMenu.status.displayName}"></span>
+                                    </a>
+                                </th:block>
+                            </div>
+
+                        </th:block>
+                    </div>
+                </div> -->
+                <div class="menus_items">
+                    <div class="menus_item" th:each="menuItem : ${menuFinder.getPrimary().menuItems}">
+                        <th:block th:if="${not #lists.isEmpty(menuItem.children)}">
+                            <a class="site-page" href="javascript:void(0);" rel="external nofollow">
+                                <span th:text="${menuItem.status.displayName}"></span>
+                            </a>
+                            <th:block th:if="${not #lists.isEmpty(menuItem.children)}">
+                                <ul class="menus_item_child">
+                                    <li th:each="childMenu : ${menuItem.children}">
+                                        <a class="site-page child" th:href="@{${childMenu.status.href}}">
+                                            <i th:if="${!#strings.isEmpty(#annotations.getOrDefault(childMenu, 'icon', ''))}" th:class="${#annotations.getOrDefault(childMenu, 'icon', '')}"></i>
+                                            <span th:text="${childMenu.status.displayName}"></span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </th:block>
+                        </th:block>
+                    </div>
+                </div>
+            <span class="sidebar-menu-item-title">标签</span>
+            <div class="card-widget card-tags card-archives card-webinfo card-allinfo"
+                th:with="tags = ${tagFinder.list(1,10)}">
+                <div class="item-headline"></div>
+                <div class="card-tag-cloud">
+                    <a class="tag-item" style="font-size:1em" th:each="tag,iterStat : ${tags}" th:href="@{${tag.status.permalink}}" th:title="${tag.spec.displayName}">
+                        <!-- 角标 -->
+                        [[${tag.spec.displayName}]]<sup th:text="${tag.status.visiblePostCount}"></sup>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 侧栏 End -->
+
+    <!-- 左下角音乐 -->
+    <div  class="needEndHide" id="nav-music" >
+        <a id="nav-music-hoverTips" onclick="heo.musicToggle()" accesskey="m">播放音乐</a>
+        <div id="console-music-bg"></div>
+        <meting-js id="12982558327" server="netease" type="playlist" mutex="true" preload="none" theme="var(--heo-main)" data-lrctype="0" order="list"></meting-js>
+    </div>
+
+    <!-- 内容 -->
+    <th:block th:replace="${body}"></th:block>
+
+
+    <!-- 右下角悬浮按钮 Start -->
+    <div id="rightside">
+        <div id="rightside-config-hide">
+            <button th:if="${htmlType == 'post'}" id="readmode" type="button" title="阅读模式"><i class="haofont hao-icon-book-open"></i></button>
+            <button th:if="${theme.config.style.translate.translateEnable}" id="translateLink" type="button" title="简繁转换">繁</button>
+            <button id="darkmode" type="button" title="浅色和深色模式转换"><i class="haofont hao-icon-circle-half-stroke"></i></button>
+            <button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="haofont hao-icon-arrows-left-right"></i></button>
+        </div>
+        <div id="rightside-config-show">
+            <button id="rightside-config" type="button" title="设置"><i class="haofont hao-icon-gear"></i></button>
+            <button th:if="${htmlType == 'post'}" class="close" id="mobile-toc-button" type="button" title="目录"><i class="haofont hao-icon-list-ul"></i></button>
+            <a id="to_comment" href="#post-comment" title="直达评论" ><i class="haofont hao-icon-chat--fill" style="font-size: 17px;"></i></a>
+            <a th:if="${theme.config.comments.commentBarrageConfig.commentBarrageEnable}" id="switch-commentBarrage" href="javascript:heo.switchCommentBarrage();" rel="external nofollow noreferrer" title="开关弹幕" draggable="false" data-pjax-state="external"><i class="haofont hao-icon-danmu"></i></a>
+            <button id="go-up" type="button" title="回到顶部"><i class="haofont hao-icon-arrow-up"></i></button>
+            <a th:if="${htmlType == 'post' || htmlType == 'page'}"
+            th:with="editor = ${htmlType == 'post' ? 'posts/editor?name='+ post.metadata.name : htmlType == 'page' ? 'single-pages/editor?name='+ singlePage.metadata.name : '' }"
+            sec:authorize="isAuthenticated()"
+            th:href="|/console/${editor}&returnToView=true|"
+            title="编辑文章" >
+                <i class="haofont hao-icon-pencil"></i>
+            </a>
+        </div>
+    </div>
+    <style th:if="false">
+        #rightside {
+            display: none;
+        }
+        .comment-barrage {
+            right: 20px;
+        }
+        @media screen and (min-width: 1300px) {
+            #post #pagination {
+                right: 20px;
+            }
+        }
+    </style>
+    <!-- 右下角悬浮按钮 End -->
+    <link rel="stylesheet" th:href="${assets_link + '/css/read-mode.css'}">
+
+    <!-- 右键菜单 Start -->
+    <div class="js-pjax">
+        <div id="rightMenu">
+            <div class="rightMenu-group rightMenu-small">
+                <div class="rightMenu-item" id="menu-backward"><i class="haofont hao-icon-arrow-left"></i></div>
+                <div class="rightMenu-item" id="menu-forward"><i class="haofont hao-icon-arrow-right"></i></div>
+                <div class="rightMenu-item" id="menu-refresh"><i class="haofont hao-icon-arrow-rotate-right"></i></div>
+                <div class="rightMenu-item" id="menu-top"><i class="haofont hao-icon-arrow-up"></i></div>
+            </div>
+            <div class="rightMenu-group rightMenu-line rightMenuPlugin">
+                <div class="rightMenu-item" id="menu-copytext">
+                    <i class="haofont hao-icon-copy"></i>
+                    <span>复制选中文本</span>
+                </div>
+                <div class="rightMenu-item" id="menu-pastetext">
+                    <i class="haofont hao-icon-paste"></i>
+                    <span>粘贴文本</span>
+                </div>
+                <a class="rightMenu-item" id="menu-commenttext">
+                    <i class="haofont hao-icon-comment-medical"></i>
+                    <span>引用到评论</span>
+                </a>
+                <div class="rightMenu-item" id="menu-newwindow">
+                    <i class="haofont hao-icon-window-restore"></i>
+                    <span>新窗口打开</span>
+                </div>
+                <div class="rightMenu-item" id="menu-copylink">
+                    <i class="haofont hao-icon-link"></i>
+                    <span>复制链接地址</span>
+                </div>
+                <div class="rightMenu-item" id="menu-copyimg">
+                    <i class="haofont hao-icon-images"></i>
+                    <span>复制此图片</span>
+                </div>
+                <div class="rightMenu-item" id="menu-downloadimg">
+                    <i class="haofont hao-icon-download"></i>
+                    <span>下载此图片</span>
+                </div>
+                <div class="rightMenu-item" id="menu-newwindowimg" >
+                    <i class="haofont hao-icon-window-restore"></i>
+                    <span>新窗口打开图片</span>
+                </div>
+                <div class="rightMenu-item" id="menu-search">
+                    <i class="haofont hao-icon-search--line"></i>
+                    <span>站内搜索</span>
+                </div>
+                <div class="rightMenu-item" id="menu-searchBaidu">
+                    <i class="haofont hao-icon-baidu"></i>
+                    <span>百度搜索</span>
+                </div>
+                <div class="rightMenu-item" id="menu-music-toggle" style="">
+                    <i class="haofont hao-icon-play"></i>
+                    <span>播放音乐</span>
+                </div>
+                <div class="rightMenu-item" id="menu-music-back" style="">
+                    <i class="haofont hao-icon-backward"></i>
+                    <span>切换到上一首</span>
+                </div>
+                <div class="rightMenu-item" id="menu-music-forward" style="">
+                    <i class="haofont hao-icon-forward"></i>
+                    <span>切换到下一首</span>
+                </div>
+                <div class="rightMenu-item" id="menu-music-playlist"
+                    onclick="javascript:window.open('https:\/\/music.163.com/#/playlist?id=12982558327')"
+                    style="">
+                    <i class="haofont hao-icon-radio"></i>
+                    <span>查看所有歌曲</span>
+                </div>
+                <div class="rightMenu-item" id="menu-music-copyMusicName" style="">
+                    <i class="haofont hao-icon-copy"></i>
+                    <span>复制歌名</span>
+                </div>
+            </div>
+            <div class="rightMenu-group rightMenu-line rightMenuOther">
+                <a class="rightMenu-item menu-link" id="menu-randomPost" onclick="toRandomPost()">
+                    <i class="haofont hao-icon-shuffle"></i>
+                    <span>随便逛逛</span>
+                </a>
+                <a class="rightMenu-item menu-link" href="../categories">
+                    <i class="haofont hao-icon-cube"></i>
+                    <span>博客分类</span>
+                </a>
+                <a class="rightMenu-item menu-link" href="../tags">
+                    <i class="haofont hao-icon-tags"></i>
+                    <span>文章标签</span>
+                </a>
+            </div>
+            <!-- <div class="rightMenu-group rightMenu-line">
+                <a class="rightMenu-item menu-link" href="cc/index.html">
+                    <i class="haofont icon-hand-holding"></i>
+                    <span>隐私协议</span>
+                </a>
+                <a class="rightMenu-item menu-link" href="cc/index.html">
+                    <i class="haofont icon-closed-captioning"></i>
+                    <span>版权协议</span>
+                </a>
+            </div> -->
+            <div class="rightMenu-group rightMenu-line rightMenuOther">
+                <div class="rightMenu-item" id="menu-copy">
+                    <i class="haofont hao-icon-copy"></i>
+                    <span>复制地址</span>
+                </div>
+                <div th:if="${theme.config.comments.commentBarrageConfig.commentBarrageEnable}" class="rightMenu-item" id="menu-commentBarrage"
+                    rel="external nofollow noreferrer" draggable="false" style="display: flex;">
+                    <i class="haofont hao-icon-chat--fill" style="font-size: 19px;"></i>
+                    <span class="menu-commentBarrage-text">关闭热评</span>
+                </div>
+                <div class="rightMenu-item" id="menu-darkmode">
+                    <i class="haofont hao-icon-moon-clear-fill" style="font-size: 19px;"></i>
+                    <span class="menu-darkmode-text">深色模式</span>
+                </div>
+                <div th:if="${theme.config.style.translate.translateEnable}" class="rightMenu-item" id="menu-translate">
+                    <i class="haofont hao-icon-fanti" style="font-size: 19px;"></i>
+                    <span>轉為繁體</span>
+                </div>
+            </div>
+        </div>
+        <div id="rightmenu-mask"></div>
+    </div>
+    <!-- 右键菜单 End -->
+
+    <div>
+        <script th:src="${assets_link + '/js/utils.js' + theme_version}"></script>
+        <script th:src="${assets_link + '/js/halo.js' + theme_version}"></script>
+        <script th:src="${assets_link + '/js/main.js' + theme_version}"></script>
+        <script charset="utf-8" data-pjax th:src="${assets_link + '/js/blogex.js'}"></script>
+        <script th:src="${assets_link + '/js/tw_cn.js'  + theme_version}"></script>
+        <!-- https://instant.page/ 网站预加载， 放在 </body> 之前 -->
+        <script th:src="${assets_link + '/libs/instantpage/instantpage.min.js'}" type="module"></script>
+        <script th:src="${assets_link + '/libs/vanilla-lazyload/lazyload.iife.min.js'}"></script>
+
+        <!-- 右下角通知 https://www.polonel.com/snackbar/ -->
+        <!-- todo head 中有它的 css，应该可以写一块，并改成后台可配置的功能，代码中应该还有他的 js -->
+        <script th:src="${assets_link + '/libs/node-snackbar/snackbar.min.js'}"></script>
+        
+        <div class="js-pjax">
+            <!-- 动态标题 -->
+            <script>
+                var leaveTitle = 'w(ﾟДﾟ)w 网站崩溃了';
+                var backTitle = '♪(^∇^*) 诶又好了';
+                var OriginTitile = "[(${siteTitle})]"
+                var titleTime
+                document.addEventListener('visibilitychange', function () {
+                    if (document.hidden) {
+                        //离开当前页面时标签显示内容
+                        document.title = leaveTitle
+                        clearTimeout(titleTime)
+                    } else {
+                        //返回当前页面时标签显示内容
+                        document.title = backTitle + OriginTitile
+                        //两秒后变回正常标题
+                        titleTime = setTimeout(function () {
+                            document.title = OriginTitile
+                        }, 2000)
+                    }
+                })
+            </script>
+        </div>
+
+        <!-- 评论 -->
+        <th:block th:if="${theme.config.comments.use!='commentWidget' && theme.config.comments.commentsEnable }"
+                th:with="use = ${theme.config.comments.use}">
+            <th:block th:replace="~{'modules/comment/' + ${use}}"></th:block>
+            <script th:if="${theme.config.comments.visitorMail.visitorMailEnable}">var visitorMail = "[(${theme.config.comments.visitorMail.mail})]";</script>
+        </th:block>
+        
+        <!--音乐-->
+        <script>var meting_api = "https://api.i-meto.com/meting/api?server=:server&type=:type&id=:id&r=:r"; </script>
+        
+        <!-- 深色模式下添加粒子效果canvas -->
+        <canvas th:if="${theme.config.style.universe}" id="universe" width="1312" height="880"></canvas>
+        <script th:if="${theme.config.style.universe}" async="" th:src="${assets_link + '/libs/canvas/dark.js'  + theme_version}"></script>
+        
+        <!-- https://davidshimjs.github.io/qrcodejs/ 生成二维码 -->
+        <!-- 应该是文章页分享使用 -->
+        <script data-pjax th:src="${assets_link + '/libs/qrcode/qrcode.min.js'}" ></script>
+        
+        <!--  https://raphamorim.io/waterfall.js/  应该是这个 还有相关的 js 代码 是否可以调整-->
+        <script th:src="${assets_link + '/libs/waterfall/waterfall.min.js'  + theme_version}"></script>
+        
+        <!-- 获取主色 https://lokeshdhakar.com/projects/color-thief/ -->
+        <!--<script th:src="@{/assets/libs/color-thief/color-thief.umd.js}"></script>-->
+        <script th:src="${assets_link + '/libs/fast-average-color/index.browser.min.js'}"></script>
+        
+        <script th:src="${assets_link + '/libs/view-image/view-image.min.js'}"></script>
+        
+        <link rel="stylesheet" th:href="${assets_link + '/libs/aplayer/APlayer.min.css'}" media="all" onload="this.media='all'">
+        
+        <script th:src="${assets_link + '/libs/aplayer/APlayer.min.js'}"></script>
+        
+        <script th:src="${assets_link + '/libs/aplayer/Meting2.min.js'}"></script>
+        
+        <script th:src="${assets_link + '/libs/pjax/pjax.min.js'}"></script>
+        
+        <!-- swiper 在瞬间滚动时会使用 -->
+        <script data-pjax th:src="${assets_link + '/libs/swiper/swiper-bundle.min.js'}"></script>
+        
+        <!-- 右键菜单 -->
+        <script th:src="${assets_link + '/js/rightmenu.js'}"></script>
+        
+        <!-- 评论弹幕 -->
+        <script th:if="${ ( ( not #strings.isEmpty(theme.config.comments.twikoos.envId)  && not #strings.isEmpty(theme.config.comments.twikoos.accessToken) ) ||
+            ( not #strings.isEmpty(theme.config.comments.artalks.server) && not #strings.isEmpty(theme.config.comments.artalks.siteName)) ||
+            (#strings.equals(theme.config.comments.use, 'Waline') && not #strings.isEmpty(theme.config.comments.walines.serverURL)) )
+            && theme.config.comments.commentBarrageConfig.commentBarrageEnable
+            && theme.config.comments.commentsEnable}" data-pjax=""
+                th:src="${assets_link + '/js/commentBarrage.js'}"></script>
+        
+        <!-- Tocbot 目录生成 start -->
+        <script th:src="${assets_link + '/libs/tocbot/4.18.2/tocbot.min.js'}"></script>
+        <link th:href="${assets_link + '/libs/tocbot/4.18.2/tocbot.css'}" rel="stylesheet">
+        
+        <!-- 51统计 -->
+        <script th:if="false">
+            !function (p) {
+                "use strict";
+                !function (t) {
+                    var s = window
+                        , e = document
+                        , i = p
+                        , c = "".concat("https:" === e.location.protocol ? "https://" : "http://", "sdk.51.la/js-sdk-pro.min.js")
+                        , n = e.createElement("script")
+                        , r = e.getElementsByTagName("script")[0];
+                    n.type = "text/javascript",
+                        n.setAttribute("charset", "UTF-8"),
+                        n.async = !0,
+                        n.src = c,
+                        n.id = "LA_COLLECT",
+                        i.d = n;
+                    var o = function () {
+                        s.LA.ids.push(i)
+                    };
+                    s.LA ? s.LA.ids && o() : (s.LA = p,
+                        s.LA.ids = [],
+                        o()),
+                        r.parentNode.insertBefore(n, r)
+                }()
+            }({
+                id: "BTqpxYNkwFCss8i10dUEmDpgLkWAP86k",
+                ck: "i6ORNJ13bYAHSmM5UGE3khGuZdNqw9aD",
+                hashMode: true
+            });
+        </script>
+        
+        <script>
+            let pjaxSelectors = ['title', '#config-diff', '#body-wrap', '#rightside-config-hide', '#rightside-config-show', '.js-pjax', '#site-config']
+            
+            pjaxSelectors.unshift('meta[property="og:type"]', 'meta[property="og:image"]', 'meta[property="og:title"]', 'meta[property="og:url"]', 'meta[property="og:description"]'
+                    , 'meta[name="twitter:title"]', 'meta[name="twitter:url"]', 'meta[name="twitter:description"]', 'meta[name="twitter:image"]')
+            
+            var pjax = new Pjax({
+                elements: 'a:not([target="_blank"])',
+                selectors: pjaxSelectors,
+                cacheBust: false,
+                analytics: false,
+                scrollRestoration: false
+            })
+            
+            document.addEventListener('pjax:send', function () {
+                
+                // removeEventListener toc scroll
+                window.removeEventListener('scroll', window.tocScrollFn)
+                
+                typeof preloader === 'object' && preloader.initLoading()
+                
+                if (window.aplayers) {
+                    for (let i = 0; i < window.aplayers.length; i++) {
+                        if (!window.aplayers[i].options.fixed) {
+                            window.aplayers[i].destroy()
+                        }
+                    }
+                }
+                
+                typeof typed === 'object' && typed.destroy()
+                
+                //reset readmode
+                const $bodyClassList = document.body.classList
+                $bodyClassList.contains('read-mode') && $bodyClassList.remove('read-mode')
+            })
+            
+            document.addEventListener('pjax:complete', function () {
+                window.refreshFn()
+                
+                document.querySelectorAll('script[data-pjax]').forEach(item => {
+                            const newScript = document.createElement('script')
+                            const content = item.text || item.textContent || item.innerHTML || ""
+                            Array.from(item.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value))
+                            newScript.appendChild(document.createTextNode(content))
+                            item.parentNode.replaceChild(newScript, item)
+                        }
+                )
+                
+                GLOBAL_CONFIG.lazyload.enable && window.lazyLoadInstance.update()
+                
+                typeof chatBtnFn === 'function' && chatBtnFn()
+                typeof panguInit === 'function' && panguInit()
+                
+                // google analytics
+                typeof gtag === 'function' && gtag('config', '', {
+                    'page_path': window.location.pathname
+                });
+                
+                // baidu analytics
+                typeof _hmt === 'object' && _hmt.push(['_trackPageview', window.location.pathname]);
+                
+                typeof loadMeting === 'function' && document.getElementsByClassName('aplayer').length && loadMeting()
+                
+                // Analytics
+                if (false) {
+                    MtaH5.pgv()
+                }
+                
+                // prismjs
+                typeof Prism === 'object' && Prism.highlightAll()
+                
+                typeof preloader === 'object' && preloader.endLoading()
+            })
+            
+            document.addEventListener('pjax:error', (e) => {
+                        if (e.request.status === 404 || e.request.status === 500) {
+                            window.location.href = e.request.responseURL;
+                        }
+                    }
+            )
+        </script>
+
+
+    </div>
+
+    <!-- 根据配置设置 css 变量值，全局 css 通过变量值进行处理 -->
+    <style type="text/css" th:inline="css">
+        [data-theme=light] {
+            --heo-theme: [(${theme.config.style.themeLightSkin})] !important;
+            --heo-theme-op: [(${theme.config.style.themeLightSkin})]23 !important;
+            --heo-theme-op-deep: [(${theme.config.style.themeLightSkin})]dd !important;
+            --heo-theme-none: [(${theme.config.style.themeLightSkin})]00 !important;
+        }
+
+        [data-theme=dark] {
+            --heo-theme: [(${theme.config.style.themeDarkSkin})] !important;
+            --heo-theme-op: [(${theme.config.style.themeDarkSkin})]23 !important;
+            --heo-theme-op-deep: [(${theme.config.style.themeDarkSkin})]dd !important;
+            --heo-theme-none: [(${theme.config.style.themeDarkSkin})]00 !important;
+        }
+
+        :root {
+            --halo-comment-widget-component-card-bg: var(--heo-card-bg);
+            --halo-comment-widget-component-theme-op: var(--heo-theme-op);
+            --halo-comment-widget-component-card-border: var(--heo-card-border);
+            --halo-comment-widget-component-shadow-border: var(--heo-shadow-border);
+            --halo-comment-widget-component-secondtext: var(--heo-secondtext);
+            --halo-comment-widget-component-lighttext: var(--heo-lighttext);
+            --halo-comment-widget-component-secondbg: var(--heo-secondbg);
+            --halo-comment-widget-component-fontcolor: var(--heo-fontcolor);
+            --halo-comment-widget-component-main: var(--heo-main);
+            --halo-comment-widget-component-background: var(--heo-background);
+            --halo-comment-widget-component-white: var(--heo-white);
+            --halo-comment-widget-component-shadow-black: var(--heo-shadow-black);
+        }
+        #page {
+            --halo-comment-widget-component-padding: 1rem;
+        }
+
+        .color-scheme-dark,.dark,[data-color-scheme=dark] {
+            --halo-search-widget-color-modal-layer: var(--heo-maskbgdeep);
+            --halo-search-widget-color-modal-content-bg: var(--heo-card-bg);
+            --halo-search-widget-color-form-input: rgb(255 255 255 / 79.9%);
+            --halo-search-widget-color-form-input-placeholder: #6b7280d9;
+            --halo-search-widget-color-form-input-bg: var(--heo-card-bg);
+            --halo-search-widget-color-form-divider: #bbbbbb0f;
+            --halo-search-widget-color-result-item-bg: var(--heo-card-bg);
+            --halo-search-widget-color-result-item-hover-bg: #90939914;
+            --halo-search-widget-color-result-item-title: rgb(255 255 255 / 79.9%);
+            --halo-search-widget-color-result-item-content: #ffffff82;
+            --halo-search-widget-color-command-kbd-item: #c0c4ccb3;
+            --halo-search-widget-color-command-kbd-border: #bbbbbb0f;
+            --halo-search-widget-color-result-empty: #6b7280d9
+        }
+
+        [data-theme=light] {
+            --halo-search-widget-color-result-item-title : #4B5563
+        }
+        /* 注释掉就有文章目录模糊效果 */
+        /* #aside-content #card-toc .toc-content a.toc-link:not(.active)  {
+            opacity: 1;
+            filter: blur(0px);
+        } */
+    </style>
+    <script data-pjax="">
+        
+        //页脚友联
+        GLOBAL_CONFIG.isFriendLinksInFooter && heo.addFriendLinksInFooter()
+        //音乐页面切换歌曲调用
+        if (GLOBAL_CONFIG.isMusic) {
+            heo.changeMusicBg(false);
+        }
+        //代码块
+        if (GLOBAL_CONFIG.prism.enable) {
+            halo.addPrismTool()
+            halo.dataCodeTheme()
+        }
+
+    </script>
+</body>
+</html>

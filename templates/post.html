@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html  xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{modules/layout :: layout(content = ~{::content}, htmlType = 'post',title = ${post.spec.title + ' | ' + site.title}, head = ~{::head})}">
+<th:block th:fragment="head">
+    <th:block th:replace="~{modules/open-graph :: open-graph(_title = ${post.spec.title},
+                _permalink = ${post.status.permalink},
+                _cover = ${post.spec.cover},
+                _excerpt = ${post.status.excerpt},
+                _type = 'article')}"></th:block>
+</th:block>
+<th:block th:fragment="content">
+    <div class="post" id="body-wrap">
+        <header class="post-bg" id="page-header">
+            <nav th:replace="~{modules/nav :: nav(title = ${post.spec.title})}"></nav>
+            <div class="coverdiv loaded" id="coverdiv">
+                <img alt="cover" class="nolazyload" id="post-cover"
+                     th:src="${#strings.isEmpty(post.spec.cover) ? theme.config.layout.postRandomImg : post.spec.cover}">
+            </div>
+            <div id="post-info">
+                <div id="post-firstinfo">
+                    <div class="meta-firstline">
+                        <!-- 这里要跳转到版权页 -->
+                        <th:block th:with="copyrightUrl =${#annotations.get(post, 'copyrightUrl')}"
+                                  th:if="${#annotations.get(post, 'copyrightEnable')  == 'true'}">
+                            <a class="post-meta-original"
+                               title="该文章为原创文章，注意版权协议"
+                               th:if="${#strings.equals(#annotations.getOrDefault(post, 'copyrightType','original'),'original')}"
+                               th:href="@{${not #strings.isEmpty(copyrightUrl) ? copyrightUrl : '#'}}"
+                            >原创</a>
+                            <a class="post-meta-original"
+                               title="该文章为转载文章，版权归原作者所有"
+                               th:if="${#strings.equals(#annotations.getOrDefault(post, 'copyrightType','original'),'reprint')}"
+                               th:href="@{${not #strings.isEmpty(copyrightUrl) ? copyrightUrl : '#'}}"
+                            >转载</a>
+                        </th:block>
+                        <span class="post-meta-categories" th:each="category : ${post.categories}"
+                              th:if="${not #lists.isEmpty(post.categories)}">
+                            <a class="post-meta-categories" th:href="@{${category.status.permalink}}"
+                               th:text="${category.spec.displayName}" th:title="${category.spec.displayName}">
+                            </a>
+                        </span>
+                        <div class="tag_share" th:if="${not #lists.isEmpty(post.tags)}">
+                            <div class="post-meta__tag-list">
+                                <a class="post-meta__tags" th:each="tag : ${post.tags}"
+                                   th:href="@{${tag.status.permalink}}"
+                                   th:title="${tag.spec.displayName}">
+                                    <span class="tags-name tags-punctuation">[[${tag.spec.displayName}]]</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h1 class="post-title" th:text="${post.spec.title}"></h1>
+                <div id="post-meta">
+                    <div class="meta-secondline">
+                        <span class="post-meta-author" data-flag-title="文章作者" title="文章作者">
+                            <i class="haofont hao-icon-zuozhe post-meta-icon"></i>[[${post.owner.displayName}]]
+                        </span>
+                        <span class="post-meta-wordcount"
+                              th:with="wordCount = ${#strings.length(post.content.content)}">
+                            <i class="haofont hao-icon-file-word post-meta-icon" title="字数"></i>
+                            <span class="post-meta-label">字数:</span>
+                            <span class="word-count" th:text="${{wordCount}}"></span>
+                            <span class="post-meta-separator"></span>
+                            <i class="haofont hao-icon-clock post-meta-icon" title="阅读耗时"></i>
+                            <span class="post-meta-label">阅读耗时:</span>
+                            <span>[[${wordCount / 400}]] 分钟</span>
+                        </span>
+                        <span class="post-meta-date">
+                            <i class="haofont hao-icon-calendar-days post-meta-icon"></i>
+                            <time th:attr="datetime=${#dates.format(post.spec.publishTime, 'yyyy-MM-dd')}"
+                                  th:text="${#dates.format(post.spec.publishTime,'yyyy/MM/dd')}"
+                                  th:title="${#dates.format(post.spec.publishTime,'yyyy-MM-dd HH:mm:ss')}">
+                            </time>
+                        </span>
+                        <span class="post-meta-date">
+                            <i class="haofont hao-icon-pencil post-meta-icon" title="最后更新时间"></i>
+                            <time th:attr="datetime=${#dates.format(post.status.lastModifyTime, 'yyyy-MM-dd')}"
+                                  th:text="${#dates.format(post.status.lastModifyTime,'yyyy/MM/dd')}"
+                                  th:title="${#dates.format(post.status.lastModifyTime,'yyyy-MM-dd HH:mm:ss')}">
+                            </time>
+                        </span>
+                        <span th:with="syncStatus=${#strings.isEmpty(#annotations.get(post, 'sync_status')) ? '未同步': #annotations.get(post, 'sync_status')}"
+                              class="post-meta-wechat" th:title=" ${pluginFinder.available('plugin-platforms-sync') &&  (syncStatus == '同步更新文章成功' || syncStatus == '同步上传文章成功') ? '该文章已在公众号中更新' : '该文章在博客首发'}">
+                            <th:block th:unless="${pluginFinder.available('plugin-platforms-sync') && (syncStatus == '同步更新文章成功' || syncStatus == '同步上传文章成功')}">
+                                <i class="haofont hao-icon-rss post-meta-icon"></i>博客独享
+                            </th:block>
+
+                            <th:block th:if="${pluginFinder.available('plugin-platforms-sync') && (syncStatus == '同步更新文章成功' || syncStatus == '同步上传文章成功')}">
+                                <i class="haofont hao-icon-weixin1 post-meta-icon"></i>公众号同步
+                            </th:block>
+                        </span>
+                        <a class="post-meta-pv" data-flag-title="访问量" title="访问量" >
+                            <i class="haofont hao-icon-fire post-meta-icon"></i>
+                            <span class="post-meta-label">热度:</span>
+                            <span id="visit" th:text="${post.stats.visit}"></span>
+                        </a>
+                        <a th:if="${post.spec.allowComment && #strings.contains('Twikoo,Artalk,commentWidget',theme.config.comments.use)}"
+                           class="post-meta-commentcount"  data-flag-title="评论数"
+                           title="评论数"
+                           href="#post-comment">
+                            <i class="haofont hao-icon-chat--fill post-meta-icon" style="font-size: 17px;"></i>
+                            <span class="post-meta-label">评论:</span>
+                            <span th:if="${#strings.equals(theme.config.comments.use, 'commentWidget')}"
+                                  id="comment-count" th:text="${post.stats.comment}">
+                                <i class="haofont hao-icon-spinner fa-spin"></i>
+                            </span>
+                            <span th:if="${#strings.equals(theme.config.comments.use, 'Twikoo')}"
+                                  id="twikoo-count">
+                                <i class="haofont hao-icon-spinner fa-spin"></i>
+                            </span>
+                            <span th:if="${#strings.equals(theme.config.comments.use, 'Artalk')}"
+                                  id="ArtalkCount">
+                                <i class="haofont hao-icon-spinner fa-spin"></i>
+                            </span>
+                        </a>
+                        <th:block th:with="contributorLogin = ${contributorFinder.getContributor(#authentication.name)}">
+                            <a class="post-meta-editor" sec:authorize="isAuthenticated()" data-flag-title="编辑文章"
+                               title="编辑文章"
+                               th:if="${contributorLogin.name} == ${post.spec.owner}"
+                               th:attr="onclick='javascript:window.open(\''+ '/console/posts/editor?name='+${post.metadata.name}+'&returnToView=true\''+ ',' +'\'_self'+'\')'">
+                                <i style="margin-top: 2px;" class="haofont hao-icon-bianji post-meta-icon"></i>
+                                <span>编辑</span>
+                            </a>
+                        </th:block>
+                    </div>
+
+                </div>
+            </div>
+            <section class="main-hero-waves-area waves-area">
+                <svg class="waves-svg" preserveAspectRatio="none" shape-rendering="auto" viewBox="0 24 150 28"
+                     xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <path
+                                d="M -160 44 c 30 0 58 -18 88 -18 s 58 18 88 18 s 58 -18 88 -18 s 58 18 88 18 v 44 h -352 Z"
+                                id="gentle-wave"></path>
+                    </defs>
+                    <g class="parallax">
+                        <use href="#gentle-wave" x="48" y="0"></use>
+                        <use href="#gentle-wave" x="48" y="3"></use>
+                        <use href="#gentle-wave" x="48" y="5"></use>
+                        <use href="#gentle-wave" x="48" y="7"></use>
+                    </g>
+                </svg>
+            </section>
+        </header>
+        <main class="layout right-aside" id="content-inner">
+            <div id="post">
+                <div class="post-ai" th:if="${not #strings.isEmpty(#annotations.get(post, 'ai')) ?
+                      #annotations.get(post, 'ai') == 'true' : theme.config.post.aiDescription.aiDescriptionEnable}">
+                    <div class="ai-title"><i class="haofont hao-icon-bilibili"></i>
+                        <div class="ai-title-text">AI-摘要</div>
+                        <div th:if="${theme.config.post.aiDescription.switchBtn}" id="ai-Toggle">切换</div>
+                        <i class="haofont hao-icon-arrow-rotate-right"></i>
+                        <div th:if="${#strings.equals(theme.config.post.aiDescription.mode, 'local')}" class="ai-tag" id="ai-tag">[[${theme.config.post.aiDescription.gptName}]] GPT</div>
+                        <div th:if="${#strings.equals(theme.config.post.aiDescription.mode, 'tianli')}" class="ai-tag" id="ai-tag">Tianli GPT</div>
+                    </div>
+                    <div class="ai-explanation" style="display: block;">AI初始化中...</div>
+                    <div class="ai-btn-box">
+                        <div class="ai-btn-item">介绍自己</div>
+                        <div class="ai-btn-item">生成本文简介</div>
+                        <div class="ai-btn-item">推荐相关文章</div>
+                        <div class="ai-btn-item">前往主页</div>
+                        <div class="ai-btn-item" id="go-tianli-blog">前往tianli博客</div>
+                    </div>
+                </div>
+
+                <!-- 文章内容 -->
+                <article  th:class="'post-content  '+${ theme.config.code.enable_line || pluginFinder.available('PluginPrismJS') ? 'line-numbers' : ''}" id="article-container">
+                    <th:block th:with="days=${(new java.util.Date().getTime()-post.status.lastModifyTime.toEpochMilli())/86400000}">
+                        <div class="note simple warning" th:if="${days > #conversions.convert(180, 'java.lang.Integer')}">
+                            <p><th:block th:text="|本文最后更新于 ${#dates.format(post.status.lastModifyTime,'yyyy-MM-dd')}，|"/>文章内容可能已经过时。</p>
+                        </div>
+                    </th:block>
+                    <th:block th:utext="${post.content.content}"/>
+                </article>
+
+                <!-- 文章ai摘要 -->
+                <script data-pjax th:if="${not #strings.isEmpty(#annotations.get(post, 'ai')) ?
+                      #annotations.get(post, 'ai') == 'true' : theme.config.post.aiDescription.aiDescriptionEnable}"
+                        th:src="${assets_link + '/libs/gpt/post-ai.js'}"></script>
+
+                <!-- 版权声明 -->
+                <div class="post-tools" id="post-tools">
+                    <div class="post-tools-left">
+            
+                        <!-- 打赏 -->
+                        <div class="post-reward" onclick="AddRewardMask()" th:if="false">
+                            <div class="reward-button button&#45;&#45;animated" title="赞赏作者"><i class="haofont hao-icon-hand-heart-fill"></i>
+                                打赏作者
+                            </div>
+                            <div class="reward-main">
+                                <ul class="reward-all"><span class="reward-title">感谢你赐予我前进的力量</span>
+                                    <ul class="reward-group">
+                                        <li class="reward-item"><a href="" target="_blank">
+                                            <img alt="微信" class="post-qr-code-img" src=""></a>
+                                            <div class="post-qr-code-desc">微信</div>
+                                        </li>
+                                        <li class="reward-item"><a href="" target="_blank">
+                                            <img alt="支付宝" class="post-qr-code-img" src=""></a>
+                                            <div class="post-qr-code-desc">支付宝</div>
+                                        </li>
+                                    </ul>
+                                    <a class="reward-main-btn" href="" target="_blank">
+                                        <div class="reward-text">赞赏者名单</div>
+                                        <div class="reward-dec">因为你们的支持让我意识到写文章的价值🙏</div>
+                                    </a>
+                                </ul>
+                            </div>
+                        </div>
+            
+                        <!-- 说明 -->
+                        <div   class="reward-link mode"><a
+                                class="reward-link-button" href="">
+                            <i class="haofont hao-icon-plant-fill"></i>运营模式与责任</a>
+                        </div>
+            
+                        <!-- 分享 -->
+                        <div class="share-link mobile" >
+                            <div class="share-qrcode">
+                                <div class="share-button" title="使用手机访问这篇文章"><i class="haofont hao-icon-qrcode"></i>
+                                </div>
+                                <div class="share-main">
+                                    <div class="share-main-all">
+                                        <div id="qrcode"></div>
+                                        <div class="reward-dec">使用手机访问这篇文章</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="share-link weibo">
+                            <a class="share-button" rel="noopener external nofollow noreferrer noopener" target="_blank" th:href="'https://service.weibo.com/share/share.php?title=' + ${post.spec.title}" title="分享到微博"><i class="haofont hao-icon-weibo" style="font-size:22px"></i></a>
+                        </div>
+                        <div class="share-link copyurl">
+                            <div class="share-button" id="post-share-url" onclick="rm.copyPageUrl()" title="复制链接"><i class="haofont hao-icon-link"></i></div>
+                        </div>
+                    </div>
+                    <div class="post-tools-right">
+                        <div class="tag_share">
+                            <div class="post-meta__tag-list">
+                                <a class="post-meta__tags" th:each="tag : ${post.tags}" th:href="@{${tag.status.permalink}}">
+                                    <span class="tags-punctuation">[[${tag.spec.displayName}]]</span>
+            
+                                    <span class="tagsPageCount" th:text="${tag.status.visiblePostCount}"></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!-- 版权声明 -->
+                <div class="post-copyright" th:with="copyrightUrl =${#annotations.get(post, 'copyrightUrl')},
+                   copyrightEnable = ${#annotations.get(post, 'copyrightEnable') == 'true'}">
+                    <div class="post-copyright__author" >
+                        <!-- 版权页 以及版权描述文字 -->
+                        <a th:if="${#strings.equals(#annotations.getOrDefault(post, 'copyrightType','original'),'original') && copyrightEnable}"
+                           class="post-copyright__original" th:href="@{${not #strings.isEmpty(copyrightUrl) ? copyrightUrl : '#'}}"
+                           title="该文章为原创文章，注意版权协议">原创</a>
+                        <a th:if="${#strings.equals(#annotations.getOrDefault(post, 'copyrightType','original'),'reprint') && copyrightEnable}"
+                           class="post-copyright__original" th:href="@{${not #strings.isEmpty(copyrightUrl) ? copyrightUrl : '#'}}"
+                           title="该文章为转载文章，版权归原作者所有">转载</a>
+                        <a class="post-copyright-title" href="#"><span th:text="${post.spec.title}"></span></a>
+                    </div>
+                    <div class="post-copyright__type">
+                        <span class="post-copyright-info" id="post-copyright-url">
+                            <a href="javascript:window.location.href;">[[${post.spec.title}]]</a>
+                        </span>
+                        <button class="post-copyright-copybtn" onclick="rm.copyPageUrl()">
+                            <i class="haofont hao-icon-paste"></i>
+                        </button>
+                    </div>
+                    <div class="post-copyright__notice">
+                        <span class="post-copyright-info">
+                            本文是原创文章，采用<a target="_blank" href="/cc">CC BY-NC-ND 4.0</a>协议，完整转载请注明来自<a href="https://www.infanx.com" target="_blank">infanx.com</a>
+                        </span>
+                    </div>
+                </div>
+                <link rel="stylesheet" th:href="${assets_link + '/css/post-copyright.css'}">
+
+                <nav class="pagination-post needEndHide" id="pagination"
+                     th:with="postCursor = ${postFinder.cursor(post.metadata.name)},
+                     postRandomImg=${#strings.contains(theme.config.layout.postRandomImg,'?') ? theme.config.layout.postRandomImg+'&' : theme.config.layout.postRandomImg+'?'}">
+                    <div th:if="${postCursor.hasPrevious()}" th:class="${postCursor.hasNext()==false} ? 'prev-post pull-full ' : 'prev-post pull-left'">
+                        <a th:if="${postCursor.hasPrevious()}" th:href="@{${postCursor.previous.status.permalink}}">
+                            <img alt="cover" id="preimg" class="nolazyload"
+                                 th:with="img = ${#strings.isEmpty(postCursor.previous.spec.cover) ? postRandomImg+postCursor.previous.spec.title : thumbnail.gen(postCursor.previous.spec.cover, 'm')}"
+                                 th:src="${isLazyload ? loadingImg : img}"
+
+                                 th:data-lazy-src="${ isLazyload ? img : ''}">
+                            <div class="pagination-info">
+                                <div class="label">上一篇</div>
+                                <div class="prev_info" th:text="${postCursor.previous.spec.title}"></div>
+                            </div>
+                        </a>
+                    </div>
+                    <div th:if="${postCursor.hasNext()}" th:class="${postCursor.hasPrevious()==false} ? 'next-post pull-full ':'next-post pull-right'">
+                        <a th:if="${postCursor.hasNext()}" th:href="@{${postCursor.next.status.permalink}}">
+                            <img alt="cover" id="preimg" class="nolazyload"
+                                 th:with="img = ${#strings.isEmpty(postCursor.next.spec.cover) ? postRandomImg+postCursor.next.spec.title : thumbnail.gen(postCursor.next.spec.cover, 'm')}"
+                                 th:src="${isLazyload ? loadingImg : img}"
+                                 th:data-lazy-src="${ isLazyload ? img : ''}">
+                            <div class="pagination-info">
+                                <div class="label">下一篇</div>
+                                <div class="next_info" th:text="${postCursor.next.spec.title}"></div>
+                            </div>
+                        </a>
+                    </div>
+                </nav>
+                <!-- 阅读建议 Start -->
+                <th:block  th:if="${not #lists.isEmpty(post.categories)}" th:with="recommendQuantity = six,
+                recommandPosts = ${postFinder.listByCategory(1,recommendQuantity == 'six' ? 7 : recommendQuantity == 'two' ? 3 : 1,post.categories.get(0).metadata.name)},
+                containsTitle = ${#strings.contains(recommandPosts,post.spec.title)},
+                postRandomImg=${#strings.contains(theme.config.layout.postRandomImg,'?') ? theme.config.layout.postRandomImg+'&' : theme.config.layout.postRandomImg+'?'}">
+                    <div class="relatedPosts" th:if="${recommandPosts.total>1}">
+                        <div class="headline">
+                            <i class="haofont hao-icon-cainixihuan" style="font-size: 1.1rem;"></i>
+                            <span>阅读建议</span>
+                        </div>
+                        <!-- 六篇文章 -->
+                        <div th:if="${#strings.equals(recommendQuantity, 'six')}" class="relatedPosts-list">
+                            <!-- 建议阅读，这里可以自定义文章数量，然后遍历展示 -->
+                            <th:block th:each="recommandPost,iterStat :${recommandPosts}"
+                                    th:if="${not #strings.equals(post.spec.title, recommandPost.spec.title)}">
+                                <div th:if="${!containsTitle ? iterStat.index <6 : true}">
+                                    <a th:href="@{${recommandPost.status.permalink}}" th:title="${recommandPost.spec.title}">
+                                        <img alt="cover" class="cover" id="preimg"
+                                            th:with="img = ${#strings.isEmpty(recommandPost.spec.cover) ? postRandomImg+recommandPost.spec.title : thumbnail.gen(recommandPost.spec.cover, 'm')}"
+                                            th:src="${isLazyload ? loadingImg : img}"
+                                            th:data-lazy-src="${ isLazyload ? img : ''}">
+                                        <div class="content is-center">
+                                            <div class="date" style="color: white"><i class="far fa-calendar-alt fa-fw"></i>
+                                                [[${#dates.format(recommandPost.spec.publishTime,'yyyy-MM-dd')}]]
+                                            </div>
+                                            <div class="title" style="color: white" th:text="${recommandPost.spec.title}"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </th:block>
+                        </div>
+                        <!-- 两篇文章 -->
+                        <div th:if="${#strings.equals(recommendQuantity, 'two')}" class="relatedPosts-list">
+                            <th:block th:each="recommandPost,iterStat :${recommandPosts}"
+                                    th:if="${not #strings.equals(post.spec.title, recommandPost.spec.title)}">
+                                <div th:if="${!containsTitle ? iterStat.index <2 : true}">
+                                    <a th:href="@{${recommandPost.status.permalink}}" th:title="${recommandPost.spec.title}">
+                                        <img class="cover" alt="cover"
+                                            th:with="img = ${#strings.isEmpty(recommandPost.spec.cover) ? postRandomImg+recommandPost.spec.title : thumbnail.gen(recommandPost.spec.cover, 'm')}"
+
+                                            th:src="${isLazyload ? loadingImg : img}"
+                                            th:data-lazy-src="${ isLazyload ? img : ''}">
+                                        <div class="content is-center">
+                                            <div class="date"><i class="far fa-calendar-alt fa-fw"></i>
+                                                [[${#dates.format(recommandPost.spec.publishTime,'yyyy-MM-dd')}]]</div>
+                                            <div class="title" th:text="${recommandPost.spec.title}"></div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                    <link th:if="${#strings.equals(recommendQuantity, 'six')}" rel="stylesheet"
+                        th:href="${assets_link + '/css/related-posts-six.css' + theme_version}">
+                    <link th:if="${#strings.equals(recommendQuantity, 'two')}" rel="stylesheet"
+                        th:href="${assets_link + '/css/related-posts-two.css' + theme_version}">
+                </th:block>
+                <!-- 阅读建议 End -->
+                <hr>
+                <!--/* 评论组件 */-->
+                <th:block
+                        th:replace="~{modules/comment :: comment(group = 'content.halo.run',
+                  kind = 'Post',
+                  name = ${post.metadata.name},
+                  allowComment = ${post.spec.allowComment})}"/>
+            </div>
+            <!-- 侧栏 -->
+            <div class="aside-content" id="aside-content">
+                <!-- 这里直接用注释控制显示隐藏 -->
+                <!-- 个人简介 -->
+                <!-- <th:block th:replace="~{'modules/aside/profile'}" /> -->
+                <!-- 网易云音乐 -->
+                <!-- <th:block th:replace="~{'modules/aside/music'}" /> -->
+                <!-- 最近文章 -->
+                <!-- <th:block th:replace="~{'modules/aside/recent-posts'}" /> -->
+                <!-- 热门文章 -->
+                <!-- <th:block th:replace="~{'modules/aside/visit-posts'}" /> -->
+                <!-- 最近评论 -->
+                <!-- <th:block th:replace="~{'modules/aside/comments'}" /> -->
+                <div class="sticky_layout">
+                    <!-- 文章目录 -->
+                    <th:block th:replace="~{'modules/aside/toc'}" />
+                    <!-- 微信公众号 -->
+                    <th:block th:replace="~{'modules/aside/wechat'}" />
+                    <!-- 文章分类 -->
+                    <th:block th:replace="~{'modules/aside/categories'}" />
+                    <!-- 文章标签 -->
+                    <th:block th:replace="~{'modules/aside/tags'}" />
+                    <!-- 统计信息 -->
+                    <th:block th:replace="~{'modules/aside/stat'}" />
+                </div>
+            </div>
+        </main>
+        <!-- 底部 -->
+        <footer th:replace="~{modules/footer}"/>
+    </div>
+</th:block>
+</html>

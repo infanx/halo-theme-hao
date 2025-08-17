@@ -1,0 +1,39 @@
+apiVersion: theme.halo.run/v1alpha1
+kind: Theme
+metadata:
+  name: infanx
+spec:
+  displayName: infanx
+  author:
+    name: infanx
+  customTemplates:
+    page:
+      - name: 关于页面模版
+        description: 关于页面
+        screenshot:
+        file: about.html
+      - name: 音乐页面模版
+        description: 音乐页面
+        screenshot:
+        file: music.html
+      - name: 留言板页面模版
+        description: 留言板页面
+        screenshot:
+        file: comments.html
+      - name: 待办清单页面模版
+        description: 待办清单页面
+        screenshot:
+        file: todolist.html
+      - name: 相册集模版
+        description: 相册集页面
+        screenshot:
+        file: albums.html
+      - name: 最近评论页面模版
+        description: 最近评论页面
+        screenshot:
+        file: recentComment.html
+  logo: https://cdn.infanx.com/images/ABA7561F29AE4D0DB8DE37F7C812B559.jpg
+  settingName: "infanx-setting"
+  configMapName: "infanx-configMap"
+  version: "1.6.2"
+  require: ">=2.20.0"

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{modules/layout :: layout(htmlType = 'index', title = null, head = ~{::head}, content = ~{::content})}">
+<th:block th:fragment="head">
+    <th:block th:replace="~{modules/open-graph :: open-graph(_title = ${site.title},
+                _permalink = '',
+                _cover = ${theme.config.other.opengraph.image},
+                _excerpt = ${site.seo.description},
+                _type = 'website')}">
+    </th:block>
+</th:block>
+<th:block th:fragment="content">
+    <div class="page" id="body-wrap">
+        <!-- 头部导航栏 -->
+        <header th:class="${theme.config.top.above.enable_above ? 'full_page' : 'not-top-img'}" id="page-header">
+            <nav th:replace="~{modules/nav :: nav(title = ${site.subtitle})}"></nav>
+            
+            <!-- 问候语 Start -->
+            <div id="greetingBox"></div>
+            <style>
+                #greetingBox {
+                    position: fixed;
+                    top: 10px;
+                    left: 15%;
+                    width: 400px;
+                    text-align: center;
+                    z-index: 10000;
+                    pointer-events: none
+                }
+                #greeting {
+                    display: inline-block;
+                    position: relative;
+                    opacity: 0;
+                    top: -110px;
+                    padding: 5px 40px;
+                    border-radius: 50px;
+                    background-color: #fff;
+                    color: #000;
+                    font-size: small;
+                    transition: .5s;
+                    box-shadow: rgb(0 0 0 / 5%) 0 10px 20px
+                }
+                #greeting.shown {
+                    opacity: 1;
+                    top: 0
+                }
+            </style>
+            <script th:inline="javascript">
+                (() => {
+                    let e =  [
+                        {
+                            greeting: "晚安😴",
+                            start_time: 0,
+                            end_time: 5
+                        }, {
+                            greeting: "早上好👋",
+                            start_time: 6,
+                            end_time: 9
+                        }, {
+                            greeting: "上午好👋",
+                            start_time: 10,
+                            end_time: 10
+                        }, {
+                            greeting: "再坚持一下就干饭了🥪",
+                            start_time: 11,
+                            end_time: 11
+                        }, {
+                            greeting: "该午休了💤",
+                            start_time: 12,
+                            end_time: 14
+                        }, {
+                            greeting: "摸鱼Time🐟",
+                            start_time: 14,
+                            end_time: 18
+                        }, {
+                            greeting: "晚餐Time🍔",
+                            start_time: 19,
+                            end_time: 19
+                        }, {
+                            greeting: "Steam ~ 上号 ! 🎮",
+                            start_time: 20,
+                            end_time: 24
+                        }];
+                    let t = document.createElement("div");
+                    t.id = "greeting", setTimeout((() => {
+                        t.classList.add("shown")
+                    }), 1e3);
+                    let i = document.querySelector("#greetingBox");
+                    i.appendChild(t);
+                    const n = (new Date).getHours();
+                    let r = "该午休了💤";
+                    for (let t = 0; t < e.length; t++) if (n >= e[t].start_time && n <= e[t].end_time) {
+                        r = e[t].greeting;
+                        break
+                    }
+                    t.innerHTML = r, setTimeout((() => {
+                        t.classList.remove("shown"), setTimeout((() => {
+                            i.remove()
+                        }), 500)
+                    }), 3e3)
+                })()
+            </script>
+            <!-- 问候语 End -->
+
+            <!-- 第一屏 Start -->
+            <th:block th:if="${theme.config.top.above.enable_above}">
+                <div class="pl-container">
+                    <th:block th:if="!${theme.config.top.above.enable_above_video}">
+                        <div class="pl-img pl-blur pl-visible"></div>
+                        <div class="pl-img pl-visible"></div>
+                        <video class="video"></video>
+                    </th:block>
+                    <th:block th:if="${theme.config.top.above.enable_above_video}">
+                        <video class="index-video" id="index-video" autoplay=""
+                            th:src="${theme.config.top.above.index_video}" loop="" muted="" playsinline=""
+                            webkit-playsinline=""
+                            style="display:block;object-fit:cover;width:100%;height:100%;pointer-events:none;">
+                        </video>
+                    </th:block>
+                </div>
+
+                <div id="site-info">
+                    <h1 id="site-title">[[${site.title}]]</h1>
+                    <div id="site-subtitle">
+                        <span id="subtitle"></span>
+                        <span class="typed-cursor" aria-hidden="true"></span>
+                    </div>
+                </div>
+                <div id="scroll-down"><i class="haofont hao-icon-angle-down scroll-down-effects"></i></div>
+
+                <link rel="stylesheet" th:href="${assets_link + '/css/fullPage.css' + theme_version}">
+
+                <style>
+                    #site-title {
+                        width: max-content;
+                        max-width: 100%;
+                        position: relative;
+                        color: rgba(255, 255, 255, 0);
+                        animation: 1.5s linear 1s 1 normal both running show;
+                        margin: 0px auto !important;
+                    }
+
+                    #site-title::after {
+                        content: "";
+                        position: absolute;
+                        left: 0px;
+                        margin: auto;
+                        border-radius: 12px;
+                        top: 11px;
+                        height: 55px;
+                        width: 110%;
+                        animation: 2s cubic-bezier(0.62, 0.21, 0.25, 1) 1.5s 1 normal both running color_change, 2s cubic-bezier(0.62, 0.21, 0.25, 1) 1.5s 1 normal both running swipe_box;
+                    }
+
+                    @media screen and (max-width: 768px) {
+                        #site-title::after {
+                            background: rgb(255, 255, 255) !important;
+                        }
+                    }
+
+                    @media screen and (max-width: 768px) {
+                        #site-subtitle::after {
+                            background: rgb(255, 255, 255) !important;
+                        }
+                    }
+
+                    #site-subtitle {
+                        width: 100%;
+                        max-width: 100%;
+                        position: relative;
+                        animation: 1.5s linear 1s 1 normal both running show;
+                        margin: 0px auto !important;
+                    }
+
+                    #site-subtitle::after {
+                        content: "";
+                        position: absolute;
+                        left: 0px;
+                        right: 0px;
+                        margin: auto;
+                        border-radius: 12px;
+                        height: 100%;
+                        width: 0%;
+                        animation: 2s cubic-bezier(0.62, 0.21, 0.25, 1) 1.5s 1 normal both running color_change, 2s cubic-bezier(0.62, 0.21, 0.25, 1) 1.5s 1 normal both running swipe_box2;
+                    }
+
+                    @keyframes color_change {
+                        0% {
+                            background: rgb(255, 255, 255);
+                        }
+
+                        100% {
+                            background: var(--xlfd-main);
+                        }
+                    }
+
+                    @-webkit-keyframes color_change {
+                        0% {
+                            background: rgb(255, 255, 255);
+                        }
+
+                        100% {
+                            background: var(--xlfd-main);
+                        }
+                    }
+
+                    @-webkit-keyframes swipe_box {
+                        0% {
+                            left: 0px;
+                            width: 0%;
+                        }
+
+                        50% {
+                            left: 0px;
+                            width: 100%;
+                        }
+
+                        100% {
+                            left: 100%;
+                            width: 0%;
+                        }
+                    }
+
+                    @keyframes swipe_box {
+                        0% {
+                            left: 0px;
+                            width: 0%;
+                        }
+
+                        50% {
+                            left: 0px;
+                            width: 100%;
+                        }
+
+                        100% {
+                            left: 100%;
+                            width: 0%;
+                        }
+                    }
+
+                    @-webkit-keyframes swipe_box2 {
+                        0% {
+                            left: 0px;
+                            width: 0%;
+                        }
+
+                        50% {
+                            left: 0px;
+                            width: 80%;
+                        }
+
+                        100% {
+                            left: 0px;
+                            width: 0%;
+                        }
+                    }
+
+                    @keyframes swipe_box2 {
+                        0% {
+                            left: 0px;
+                            width: 0%;
+                        }
+
+                        50% {
+                            left: 0px;
+                            width: 80%;
+                        }
+
+                        100% {
+                            left: 0px;
+                            width: 0%;
+                        }
+                    }
+
+                    @-webkit-keyframes show {
+                        0% {
+                            color: rgba(255, 255, 255, 0);
+                            text-shadow: transparent 2px 3px 10px;
+                        }
+
+                        81% {
+                            color: rgba(255, 255, 255, 0);
+                        }
+
+                        100% {
+                            color: rgb(255, 255, 255);
+                        }
+                    }
+
+                    @keyframes show {
+                        0% {
+                            color: rgba(255, 255, 255, 0);
+                            text-shadow: transparent 2px 3px 10px;
+                        }
+
+                        81% {
+                            color: rgba(255, 255, 255, 0);
+                        }
+
+                        100% {
+                            color: rgb(255, 255, 255);
+                        }
+                    }
+
+                    .pl-img {
+                        background-image: url([[${theme.config.top.above.index_img}]]);
+
+                    }
+
+                    @media screen and (max-width: 768px) {
+                        .pl-img {
+                            background-image: url([[${theme.config.top.above.phone_index_img}]]);
+                        }
+                    }
+
+                    .typed-cursor {
+                        opacity: 1;
+                    }
+
+                    .typed-cursor.typed-cursor--blink {
+                        animation: typedjsBlink 0.7s infinite;
+                        -webkit-animation: typedjsBlink 0.7s infinite;
+                        animation: typedjsBlink 0.7s infinite;
+                    }
+
+                    @keyframes typedjsBlink {
+                        50% {
+                            opacity: 0.0;
+                        }
+                    }
+
+                    @-webkit-keyframes typedjsBlink {
+                        0% {
+                            opacity: 1;
+                        }
+                        50% {
+                            opacity: 0.0;
+                        }
+                        100% {
+                            opacity: 1;
+                        }
+                    }
+                </style>
+                <script th:inline="javascript">
+                    function subtitleType() {
+                        if([[${theme.config.top.above.enable_typed_random}]]){
+                            fetch("https://v1.hitokoto.cn").then((t => t.json())).then((t => {
+                                {
+                                    const e = "出自 " + t.from;
+                                    const n = [[${theme.config.top.above.typed}]].map((item) => {
+                                        return item.realNode.text;
+                                    });
+                                    n.push(t.hitokoto, e), window.typed = new Typed("#subtitle", {
+                                        strings: n,
+                                        startDelay: 300,
+                                        typeSpeed: 100,
+                                        loop: !0,
+                                        backSpeed: 50
+                                    })
+                                }
+                            }))
+                        }else{
+                            const n = [[${theme.config.top.above.typed}]].map((item) => {
+                                return item.realNode.text;
+                            });
+                            window.typed = new Typed("#subtitle", {
+                                strings: n,
+                                startDelay: 300,
+                                typeSpeed: 100,
+                                loop: !0,
+                                backSpeed: 50
+                            })
+                        }
+                    }
+                    // 防止加载文字太短时第一个自定义文字显示不出来
+                    setTimeout(()=>{
+                        "function" == typeof Typed ? subtitleType() : getScript("https://npm.elemecdn.com/typed.js@2.0.12/lib/typed.min.js").then(subtitleType)
+                    },1800)
+                </script>
+            </th:block>
+            <!-- 第一屏 End -->
+        </header>
+        <div id="home_top">
+            <!-- Moment Start -->
+            <div class="bbTimeList container" id="bbTimeList">
+                <i class="haofont hao-icon-logo-moment" onclick="" style="font-size: 1.3rem;" title="瞬间"></i>
+                    <!-- 必须安装Moment插件 否则报错 -->
+                    <div class="swiper-container swiper-no-swiping" id="bbtalk" tabindex="-1">
+                        <div class="swiper-wrapper" id="bber-talk" onclick="pjax.loadUrl('/moments')" th:if="${momentFinder}">
+                            <th:block th:each="moment : ${momentFinder.listAll()}" th:with="content=${moment.spec.content}">
+                                <div class="li-style swiper-slide" th:if="${not #strings.isEmpty(content.raw)}" th:utext="${content.raw}">
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                    <i class="bber-gotobb haofont hao-icon-circle-arrow-right" onclick="location.href='/moments'" title="查看全文"></i>
+            </div>
+            <!-- Moment End -->
+
+            <!-- Banner Start -->
+            <div class="recent-top-post-group" id="recent-top-post-group">
+                <div class="recent-post-top" id="recent-post-top">
+                    <div id="bannerGroup">
+                        <div id="banners">
+                            <div class="tags-group-all">
+                                <!--  banners 使用默认值-->
+                                <div class="tags-group-wrapper">
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#31A8FF">
+                                            <img th:src="${assets_link + '/images/icons/Photoshop.webp'}" title="Photoshop">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#DA1A32">
+                                            <img th:src="${assets_link + '/images/icons/OpenStack.webp'}" title="OpenStack">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#9999FF">
+                                            <img th:src="${assets_link + '/images/icons/AfterEffect.webp'}" title="AfterEffect">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#57B6E6">
+                                            <img th:src="${assets_link + '/images/icons/Docker.webp'}" title="Docker">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#e9572b">
+                                            <img th:src="${assets_link + '/images/icons/HTML.webp'}" title="HTML">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#2c51db">
+                                            <img th:src="${assets_link + '/images/icons/CSS.webp'}" title="CSS">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#9999FF">
+                                            <img th:src="${assets_link + '/images/icons/Premiere.webp'}" title="Premiere">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#f7cb4f">
+                                            <img th:src="${assets_link + '/images/icons/JS.webp'}" title="JS">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#f29e39">
+                                            <img th:src="${assets_link + '/images/icons/Illustrator.webp'}" title="illustrator">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:linear-gradient(-45deg,#aca2ff,#b5b5b5)">
+                                            <img th:src="${assets_link + '/images/icons/Python.webp'}" title="Python">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#989BF8">
+                                            <img th:src="${assets_link + '/images/icons/Audition.webp'}" title="Audition">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:linear-gradient(-45deg,#79ec94,#fbd948)">
+                                            <img th:src="${assets_link + '/images/icons/CentOS.webp'}" title="CentOS">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#df5b40">
+                                            <img th:src="${assets_link + '/images/icons/Git.webp'}" title="Git">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#90aa7d">
+                                            <img th:src="${assets_link + '/images/icons/Linux.webp'}" title="Linux">
+                                        </div>
+                                    </div>
+
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#31A8FF">
+                                            <img th:src="${assets_link + '/images/icons/Photoshop.webp'}" title="Photoshop">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#DA1A32">
+                                            <img th:src="${assets_link + '/images/icons/OpenStack.webp'}" title="OpenStack">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#9999FF">
+                                            <img th:src="${assets_link + '/images/icons/AfterEffect.webp'}" title="AfterEffect">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#57B6E6">
+                                            <img th:src="${assets_link + '/images/icons/Docker.webp'}" title="Docker">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#e9572b">
+                                            <img th:src="${assets_link + '/images/icons/HTML.webp'}" title="HTML">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#2c51db">
+                                            <img th:src="${assets_link + '/images/icons/CSS.webp'}" title="CSS">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#9999FF">
+                                            <img th:src="${assets_link + '/images/icons/Premiere.webp'}" title="Premiere">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#f7cb4f">
+                                            <img th:src="${assets_link + '/images/icons/JS.webp'}" title="JS">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#f29e39">
+                                            <img th:src="${assets_link + '/images/icons/Illustrator.webp'}" title="illustrator">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:linear-gradient(-45deg,#aca2ff,#b5b5b5)">
+                                            <img th:src="${assets_link + '/images/icons/Python.webp'}" title="Python">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#989BF8">
+                                            <img th:src="${assets_link + '/images/icons/Audition.webp'}" title="Audition">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:linear-gradient(-45deg,#79ec94,#fbd948)">
+                                            <img th:src="${assets_link + '/images/icons/CentOS.webp'}" title="CentOS">
+                                        </div>
+                                    </div>
+                                    <div class="tags-group-icon-pair">
+                                        <div class="tags-group-icon" style="background:#df5b40">
+                                            <img th:src="${assets_link + '/images/icons/Git.webp'}" title="Git">
+                                        </div>
+                                        <div class="tags-group-icon" style="background:#90aa7d">
+                                            <img th:src="${assets_link + '/images/icons/Linux.webp'}" title="Linux">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--  banners 使用默认值-->
+                            </div>
+                            <div class="banners-title">
+                                <div class="banners-title-big">Welcome</div>
+                                <div class="banners-title-big">infanx.com</div>
+                                <div class="banners-title-small">更多信息请关注 GitHub</div>
+                            </div>
+                            <div class="banners-link">
+                                <div>
+                                    <a class="banners-link-btn blb-hot" href="">
+                                        <i class="haofont hao-icon-book"></i>
+                                        <div class="banners-link-title">必看</div>
+                                    </a>
+                                </div>
+                                <div>
+                                    <a class="banners-link-btn blb-top" href="">
+                                        <i class="haofont hao-icon-fire"></i>
+                                        <div class="banners-link-title">热门</div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- category -->
+                        <div class="categoryGroup">
+                            <div class="categoryItem">
+                                <a class="categoryButton CB1 bikan" href="">
+                                    <span class="categoryButtonText">必看</span>
+                                    <i class="haofont hao-icon-book"></i>
+                                </a>
+                            </div>
+                            <div class="categoryItem">
+                                <a class="categoryButton remen" href="">
+                                    <span class="categoryButtonText">热门</span>
+                                    <i class="haofont hao-icon-fire"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <style>
+                            a.categoryButton.bikan {
+                                background: linear-gradient(to right, #358bff, #15c6ff);
+                                background-size: 200%;
+                            }
+                            
+                            [data-theme=dark] a.categoryButton.bikan {
+                                background: linear-gradient(to right, #0653b8,#2fcbff);
+                                background-size: 200%;
+                            }
+                            
+                            .banners-link-btn.blb-hot {
+                                background: linear-gradient(to right, #358bff, #15c6ff);
+                                background-size: 200%
+                            }
+                            
+                            .banners-link-btn.blb-hot:hover,
+                            .banners-link-btn.blb-top:hover {
+                                background-position: 100% 0;
+                                cursor: pointer;
+                                color: var(--heo-white)
+                            }
+                            a.categoryButton.remen {
+                                background: linear-gradient(to right, #ff6655, #ffbf37);
+                                background-size: 200%;
+                            }
+                            
+                            [data-theme=dark] a.categoryButton.remen {
+                                background: linear-gradient(to right, #e22a16, #da980c);
+                                background-size: 200%;
+                            }
+                            
+                            .banners-link-btn.blb-hot:hover,
+                            .banners-link-btn.blb-top:hover {
+                                background-position: 100% 0;
+                                cursor: pointer;
+                                color: var(--heo-white)
+                            }
+                            
+                            .banners-link-btn.blb-top {
+                                background: linear-gradient(to right, #ff6655, #ffbf37);
+                                background-size: 200%
+                            }
+                        </style>
+                    
+                    </div>        
+                    <!-- 推荐文章 -->
+                    <div class="topGroup" id="topGroup" th:with='topGroupPosts = ${postFinder.list(1,6)}, postRandomImg=${#strings.contains(theme.config.layout.postRandomImg,"?") ? theme.config.layout.postRandomImg+"&" : theme.config.layout.postRandomImg+"?"}'>
+                        <div class="recent-post-group">
+                        <div class="recent-post-item" th:each="post,iter : ${topGroupPosts}" th:if="${#strings.equals(theme.config.top.BannerRight.recommendPost, 'latest')}">
+                            <div class="post_cover" th:classappend="${iter.index % 2 == 0 ? 'left_radius' : 'right_radius'}">
+                                <a th:href="@{${post.status.permalink}}" th:title="${post.spec.title}">
+                                    <span class="recent-post-top-text" th:attr="onclick='pjax.loadUrl(\''+ @{${post.status.permalink}} +'\')'">荐</span>
+                                    <img class="post_bg" th:with=' img = ${#strings.isEmpty(post.spec.cover) ? postRandomImg+post.spec.title : thumbnail.gen(post.spec.cover, "s")}' th:alt="${post.spec.title}" th:src="${isLazyload ? loadingImg : img}" th:data-lazy-src="${ isLazyload ? img : ''}" />
+                                </a>
+                            </div>
+                            <div class="recent-post-info">
+                                <a class="article-title" th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"
+                                    th:title="${post.spec.title}">
+                                </a>
+                            </div>
+                        </div>
+                        <!-- 自定义的文章右上角的推荐文章 -->
+                        <div class="recent-post-item" th:each="cuscomPost,iter : ${theme.config.top.BannerRight.recommendPostCustom}"
+                                th:if="${#strings.equals(theme.config.top.BannerRight.recommendPost, 'custom') && not #strings.isEmpty(cuscomPost.post) }">
+                            <th:block th:with="post = ${postFinder.getByName(cuscomPost.post)}">
+                                <div class="post_cover" th:classappend="${iter.index % 2 == 0 ? 'left_radius' : 'right_radius'}">
+                                    <a th:href="@{${post.status.permalink}}" th:title="${post.spec.title}">
+                                        <span class="recent-post-top-text"
+                                                th:attr="onclick='pjax.loadUrl(\''+ @{${post.status.permalink}} +'\')'">荐</span>
+                                        <img class="post_bg"
+                                                th:with='img = ${#strings.isEmpty(post.spec.cover) ? postRandomImg+post.spec.title : thumbnail.gen(post.spec.cover, "s")}'
+                                                th:alt="${post.spec.title}" th:src="${isLazyload ? loadingImg : img}"
+                                                th:data-lazy-src="${ isLazyload ? img : ''}" />
+                                    </a>
+                                </div>
+                                <div class="recent-post-info">
+                                    <a class="article-title" th:href="@{${post.status.permalink}}" th:text="${post.spec.title}"
+                                        th:title="${post.spec.title}">
+                                    </a>
+                                </div>
+                            </th:block>
+                        </div>
+                        </div>
+
+                        <!-- 今日推荐 -->
+                        <div class="todayCard" id="todayCard" onclick="">
+                        <div class="todayCard-info">
+                            <div class="todayCard-tips"></div>
+                            <div class="todayCard-title"></div>
+                        </div>
+                        <div class="todayCard-cover" th:style="'background:url('+ ${assets_link} + '/images/background/nj-light.webp) no-repeat center/cover'">
+                        </div>
+                        <style>
+                                [data-theme=dark] #todayCard .todayCard-cover {background: url("[(${assets_link} + '/images/background/nj-night.webp')]")  no-repeat center/cover !important}
+                        </style>
+                        <div class="banner-button-group">
+                            <a class="banner-button" onclick="window.event.cancelBubble=!0;heo.hideTodayCard()">
+                                <i class="haofont hao-icon-circle-plus"></i>
+                                <span class="banner-button-text">更多推荐</span>
+                            </a>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Banner End -->
+        </div>
+        <main class="layout right-aside" id="content-inner">
+            <div class="recent-posts" id="recent-posts">
+                <!-- 分类导航栏 Start -->
+                <div id="category-bar">
+                    <div class="category-bar-items" id="category-bar-items">
+                        <div class="category-bar-item select" id="category-bar-home">
+                            <a href="/">首页</a>
+                        </div>
+                        <div class="category-bar-item" th:each="categoryItem : ${categoryFinder.listAll()}" th:id="${categoryItem.spec.displayName}">
+                            <a th:href="@{${categoryItem.status.permalink}}" th:text="${categoryItem.spec.displayName}"></a>
+                        </div>
+                    </div>
+                    <a class="category-bar-more" href="/categories">更多</a>
+                </div>
+                <!-- 分类导航栏 End -->
+                
+                <!-- 文章列表 Start -->
+                <th:block th:with='postItems=${posts.items}, postRandomImg=${#strings.contains(theme.config.layout.postRandomImg,"?") ? theme.config.layout.postRandomImg+"&" : theme.config.layout.postRandomImg+"?"}'>
+                    <!-- card，需要添加在没有图片时使用随机图片 -->
+                    <div class="recent-post-item"
+                        th:classappend="${theme.config.layout.post.cols} + ' ' +
+                        ${theme.config.layout.post.postLocation} + ' ' +
+                        (${iStat.even} ? 'even' : 'odd') + ' ' +
+                        (${post.spec.pinned} ? 'pinned-post-item' : '')"
+                        th:attr="onclick='pjax.loadUrl(\''+ @{${post.status.permalink}} +'\')'"
+                        th:each="post,iStat : ${postItems}">
+                        <div class="post_cover left_radius">
+                            <a th:attr="title=${post.spec.title}" th:href="@{${post.status.permalink}}">
+                                <img class="post_bg"
+                                    th:with='img = ${#strings.isEmpty(post.spec.cover) ? postRandomImg+post.spec.title : thumbnail.gen(post.spec.cover, "m")}'
+                                    th:alt="${post.spec.title}"
+                                    th:data-lazy-src="${ isLazyload ? img : ''}"
+                                    th:src="${isLazyload ? loadingImg : img}">
+                            </a>
+                        </div>
+                        <div class="recent-post-info">
+                            <div class="recent-post-info-top">
+                                <div class="recent-post-info-top-tips">
+                                    <span class="sticky-warp sticky" th:if="${post.spec.pinned}">置顶</span></span>
+                                    <!-- 类别非空时 -->
+                                    <th:block th:if="${not #lists.isEmpty(post.categories)}">
+                                        <span th:each="category : ${post.categories}" th:href="@{${category.status.permalink}}"
+                                            th:text="${category.spec.displayName}" th:title="${category.spec.displayName}"
+                                            class="original"></span>
+                                    </th:block>
+                                    <!--                    <span class="lastestpost">最新</span>-->
+                                    <a class="unvisited-post" th:href="@{${post.status.permalink}}" th:title="${post.spec.title}"
+                                    data-pjax-state="">未读</a>
+                                </div>
+                                <a class="article-title"
+                                th:attr="title=${post.spec.title}"
+                                th:href="@{${post.status.permalink}}"
+                                th:text="${post.spec.title}">
+                                </a>
+                                <div class="content" th:text="${post.status.excerpt}"></div>
+                            </div>
+                            
+                            <div class="article-meta-wrap">
+                                <!-- tag -->
+                                <th:block th:if="${not #lists.isEmpty(post.tags)}">
+                                    <span class="article-meta tags">
+                                        <a class="article-meta__tags" event.cancelbubble
+                                        onclick="window.event.cancelBubble=!0"
+                                        th:each="tag : ${post.tags}"
+                                        th:href="@{${tag.status.permalink}}"
+                                        th:title="${tag.spec.displayName}">
+                                            <span class="tags-punctuation">[[${#strings.trim(tag.spec.displayName)}]]</span>
+                                        </a>
+                                    </span>
+                                </th:block>
+                                <!-- 创建时间 -->
+                                <span class="post-meta-date" th:with="days=${(new java.util.Date().getTime()-post.spec.publishTime.toEpochMilli())/86400000}">
+                                    <i class="far fa-calendar-alt"></i>
+                                    <time style="display: inline;"
+                                        th:datetime="${post.spec.publishTime}"
+                                        th:if="${days > 30}"
+                                        th:text="${#dates.format(post.spec.publishTime,'yyyy-MM-dd')}"
+                                        th:title="${#dates.format(post.spec.publishTime,'yyyy-MM-dd')}+创建">
+                                    </time>
+                                    <time style="display: inline;"
+                                        th:datetime="${post.spec.publishTime}"
+                                        th:if="${days <= 30 && days > 0}"
+                                        th:text="${days}+天前"
+                                        th:title="${#dates.format(post.spec.publishTime,'yyyy-MM-dd')}+创建">
+                                    </time>
+                                    <time style="display: inline;"
+                                        th:datetime="${post.spec.publishTime}"
+                                        th:if="${days == 0}"
+                                        th:text="最近"
+                                        th:title="${#dates.format(post.spec.publishTime,'yyyy-MM-dd')}+创建">
+                                    </time>
+                                </span>
+                            </div>
+                        
+                        </div>
+                        
+                        <!-- 文章卡片擦亮效果 -->
+                        <style>
+                            #recent-posts > .recent-post-item:not(a)::before {
+                                content: "";
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 100%;
+                                height: 200%;
+                                background: linear-gradient(to right, transparent, white, transparent);
+                                transform: translateX(-200%);
+                                transition: transform 0.5s linear;
+                                z-index: 1;
+                            }
+                            
+                            #recent-posts > .recent-post-item:not(a):hover::before {
+                                transform: translateX(100%) skewX(-60deg);
+                            }
+                        </style>
+                    </div>
+                    
+                    <!-- 分页 -->
+                    <div th:replace="~{modules/page :: page('',${posts},true,'')}"></div>
+
+                </th:block>
+                <!-- 文章列表 End -->
+
+            </div>
+            <div class="aside-content" id="aside-content">
+                <!-- 这里直接用注释控制显示隐藏 -->
+                <!-- 个人简介 -->
+                <th:block th:replace="~{'modules/aside/profile'}" />
+                <!-- 最近文章 -->
+                <!-- <th:block th:replace="~{'modules/aside/recent-posts'}" /> -->
+                <!-- 热门文章 -->
+                <!-- <th:block th:replace="~{'modules/aside/visit-posts'}" /> -->
+                <!-- 最近评论 -->
+                <!-- <th:block th:replace="~{'modules/aside/comments'}" /> -->
+                <div class="sticky_layout">
+                    <!-- 文章分类 -->
+                    <!-- <th:block th:replace="~{'modules/aside/categories'}" /> -->
+                    <!-- 文章标签 -->
+                    <!-- <th:block th:replace="~{'modules/aside/tags'}" /> -->
+                    <!-- 微信公众号 -->
+                    <th:block th:replace="~{'modules/aside/wechat'}" />
+                    <!-- 网易云音乐 -->
+                    <th:block th:replace="~{'modules/aside/music'}" />
+                    <!-- 统计信息 -->
+                    <th:block th:replace="~{'modules/aside/stat'}" />
+                </div>
+            </div>
+        </main>
+        <!-- 底部 -->
+        <footer th:replace="~{modules/footer}"/>
+    </div>
+</th:block>
+</html>

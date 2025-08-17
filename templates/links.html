@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{modules/layout :: layout(content = ~{::content}, htmlType = 'links', title = ${'友链' + ' | ' + site.title}, head = ~{::head})}">
+<th:block th:fragment="head">
+    <th:block th:replace="~{modules/open-graph :: open-graph(_title = '友链',
+                _permalink = '/links',
+                _cover = ${theme.config.other.opengraph.image},
+                _excerpt = ${site.seo.description},
+                _type = 'website')}">
+    </th:block>
+</th:block>
+<th:block th:fragment="content">
+    <div class="page" id="body-wrap">
+        <header class="not-top-img" id="page-header">
+            <nav th:replace="~{modules/nav :: nav(title = '友链')}"></nav>
+            <link rel="stylesheet" type="text/css" th:href="${assets_link + '/libs/fcircle/heo-fcircle3.css'}">
+        </header>
+        <main class="layout hide-aside" id="content-inner">
+            <div id="page">
+                <div class="flink" id="banners">
+                    <div class="banners-title">
+                        <div class="banners-title-small">友情链接</div>
+                        <div class="banners-title-big">我和我的小伙伴们</div>
+                    </div>
+                    <div class="banner-button-group">
+                        <a class="banner-button secondary" data-pjax-state="" onclick="travelling()">
+                            <i class="haofont hao-icon-paper-plane1"></i>
+                            <span class="banner-button-text">随机访问</span>
+                        </a>
+                        <a class="banner-button" href="#submit-links" rel="external nofollow">
+                            <i class="haofont hao-icon-link"></i>
+                            <span class="banner-button-text">申请友链</span>
+                        </a>
+                    </div>
+                    <div class="tags-group-all nowrapMove">
+                        <div class="tags-group-wrapper">
+                            <th:block th:each="group : ${groups}">
+                                <th:block th:each="link,iterStat : ${group.links}" th:if="${group.links.size > 2}">
+                                    <div class="tags-group-icon-pair" th:if="${iterStat.even}">
+                                        <a class="tags-group-icon" target="_blank" th:href="${linkOdd.spec.url}"
+                                           th:title="${linkOdd.spec.displayName}"
+                                           th:with="linkOdd = ${group.links.get(iterStat.index - 1)}">
+                                            <img th:with=" img = @{${linkOdd.spec.logo}}"
+                                                 th:src="${isLazyload ? loadingImg : img}"
+                                                 th:data-lazy-src="${ isLazyload ? img : ''}"
+                                                 th:title="${linkOdd.spec.displayName}">
+                                        </a>
+                                        <a class="tags-group-icon" target="_blank" th:href="${linkEven.spec.url}"
+                                           th:title="${linkEven.spec.displayName}" th:with="linkEven = ${link}">
+                                            <img th:with="img = @{${linkEven.spec.logo}}"
+                                                 th:src="${isLazyload ? loadingImg : img}"
+                                                 th:data-lazy-src="${ isLazyload ? img : ''}"
+                                                 th:title="${linkEven.spec.displayName}">
+                                        </a>
+                                    </div>
+                                </th:block>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+                <!--互动友链-->
+                <style>
+                    #iframe {
+                        border: var(--style-border);
+                        border-radius: 12px;
+                    }
+                    .addBtn {
+                        display: flex;
+                        justify-content: center;
+                        flex-wrap: wrap;
+                        width: 100%;
+                    }
+                    .addBtn button {
+                        transition: .2s;
+                        display: flex;
+                        margin: 31px auto 0px;
+                        color: var(--heo-white);
+                        padding: 15px;
+                        border-radius: 12px;
+                        background: var(--search-result-title);
+                        align-items: center;
+                    }
+                    button {
+                        padding: 0;
+                        outline: 0;
+                        border: none;
+                        background: 0 0;
+                        cursor: pointer;
+                        touch-action: manipulation;
+                    }
+                    .fa-solid, .fas {
+                        font-family: "Font Awesome 6 Free";
+                        font-weight: 900;
+                    }
+                    .addBtn i {
+                        font-size: 1.3rem;
+                        margin-right: 10px;
+                    }
+                    .addBtn button:hover {
+                        background: #4b7aff;
+                        color: #fff;
+                    }
+                </style>
+                <div class="flink">
+                    <iframe id="iframe" scrolling="auto" src="/themes/infanx/assets/link-canvas.html" frameborder="0" height="450px" width="100%"></iframe>
+                    <div class="addBtn">
+                        <button onclick="javascript:refreshFrame();">
+                            <i class="fas fa-shuffle"></i>换个头像试试
+                        </button>
+                    </div>
+                </div>
+                <script th:inline="javascript">
+                    function refreshFrame() {
+                        document.getElementById('iframe').contentWindow.location.reload(true);
+                    }
+                    const group = [[${ groups }]]
+                    const logos = group.flatMap((item) => {
+                        return item.links
+                    }).flatMap((item) => {
+                        return item.spec.logo
+                    })
+                    localStorage.setItem('logos', JSON.stringify(logos))
+                </script>
+                <div class="flink" id="article-container">
+                    <th:block th:each="group,iterStat : ${groups}">
+                        <h2 th:if="${not #lists.isEmpty(group.spec.displayName)}">
+                            <a class="headerlink" th:href="'#'+${group.spec.displayName}+'-'+${group.links.size}"
+                               th:title="${group.spec.displayName}+ '('+${group.links.size}+')'"></a>
+                            [[${group.spec.displayName}]] ([[${group.links.size}]])
+                        </h2>
+                        <div class="flink-desc" th:if="${not #strings.isEmpty(#annotations.get(group, 'description'))}">[[${#annotations.get(group, 'description')}]]</div>
+        
+                        <!-- 第一个，使用卡片展示 -->
+                        <div th:if="${#strings.equals(#annotations.get(group, 'displayStyle'),'beautify') && not #lists.isEmpty(group.links)}"
+                             class="site-card-group">
+                            <div class="site-card" th:each="link : ${group.links}">
+                                <span th:if="${not #strings.isEmpty(#annotations.get(link, 'label'))}"
+                                      th:style="'background-color:' + ${#annotations.get(link,'labelColor')}"
+                                      class="site-card-tag">[[${#annotations.get(link, 'label')}]]</span>
+                                <a class="img" target="_blank" th:href="${link.spec.url}" th:title="${link.spec.displayName}">
+                                    <img class="flink-avatar" style="pointer-events: none;" th:alt="${link.spec.displayName}"
+                                         th:with="img = @{${#strings.isEmpty(#annotations.get(link, 'siteshot')) ? link.spec.logo : #annotations.get(link,'siteshot') }}"
+        
+                                         th:src="${isLazyload ? loadingImg : img}"
+                                         th:data-lazy-src="${ isLazyload ? img : ''}">
+                                </a>
+                                <a class="info cf-friends-link" target="_blank" th:href="${link.spec.url}"
+                                   th:title="${link.spec.displayName}">
+                                    <div class="site-card-avatar no-lightbox">
+                                        <img class="flink-avatar cf-friends-avatar" th:alt="${link.spec.displayName}"
+        
+                                             th:src="${isLazyload ? loadingImg : link.spec.logo}"
+                                             th:data-lazy-src="${ isLazyload ? link.spec.logo : ''}">
+                                    </div>
+                                    <div class="site-card-text">
+                                        <span class="title cf-friends-name" th:text="${link.spec.displayName}"></span>
+                                        <span class="desc" th:text="${link.spec.description}"
+                                              th:title="${link.spec.description}"></span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+        
+                        <div class="flink-list"
+                             th:if="${#strings.equals(#annotations.get(group, 'displayStyle'),'default') && not #lists.isEmpty(group.links)}">
+                            <div class="flink-list-item" th:each="link : ${group.links}">
+                                <span th:if="${not #strings.isEmpty(#annotations.get(link, 'label'))}"
+                                      th:style="'background-color:' + ${#annotations.get(link,'labelColor')}"
+                                      class="site-card-tag">[[${#annotations.get(link, 'label')}]]</span>
+                                <a class="cf-friends-link" rel="external nofollow" target="_blank" th:href="${link.spec.url}"
+                                   th:title="${link.spec.displayName}">
+                                    <img class="flink-avatar cf-friends-avatar" th:alt="${link.spec.displayName}"
+        
+                                         th:src="${isLazyload ? loadingImg : link.spec.logo}"
+                                         th:data-lazy-src="${ isLazyload ? link.spec.logo : ''}">
+                                    <div class="flink-item-info no-lightbox">
+                                        <span class="flink-item-name cf-friends-name" th:text="${link.spec.displayName}"></span>
+                                        <span class="flink-item-desc" th:text="${link.spec.description}"
+                                              th:title="${link.spec.description}"></span>
+                                        <img
+                                             th:src="${isLazyload ? loadingImg : link.spec.logo}"
+                                             th:data-lazy-src="${ isLazyload ? link.spec.logo : ''}">
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+        
+                        <div class="flink-list mini"
+                             th:if="${#strings.equals(#annotations.get(group, 'displayStyle'),'deprecated') && not #lists.isEmpty(group.links)}">
+                            <div class="flink-list-item" th:each="link : ${group.links}">
+                                <a class="cf-friends-link" rel="external nofollow" target="_blank" th:href="${link.spec.url}"
+                                   th:title="${link.spec.displayName}">
+                                    <img class="flink-avatar cf-friends-avatar"
+        
+                                         th:src="${isLazyload ? loadingImg : link.spec.logo}"
+                                         th:data-lazy-src="${ isLazyload ? link.spec.logo : ''}"
+                                         th:alt="${link.spec.displayName}">
+                                    <div class="img-alt is-center">[[${link.spec.displayName}]]</div>
+                                    <div class="flink-item-info">
+                                        <span class="flink-item-name cf-friends-name">[[${link.spec.displayName}]]</span>
+                                        <span class="flink-item-desc"
+                                              th:title="${link.spec.description}">[[${link.spec.description}]]</span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </th:block>
+                    <hr>
+                    <h2 id="submit-links"><a href="#友情链接申请" class="headerlink" title="友情链接申请" draggable="false" data-pjax-state=""></a>🧑‍🤝‍🧑友情链接申请</h2>
+                    <p>很高兴您能访问本站并愿意和我交流，如果你也想加入友链，可以在下方评论区留言，我在看到您的信息后会及时添加。</p>
+                    <details>
+                        <summary>⛔️友情链接页免责声明</summary>
+                        <h2><a class="headerlink" title="免责声明" data-pjax-state=""></a>免责声明</h2>
+                        <p>本博客遵守中华人民共和国相关法律。本页内容仅作为方便学习而产生的快速链接的链接方式，对与友情链接中存在的链接、好文推荐链接等均为其他网站。我本人能力有限无法逐个甄别每篇文章的每个字，并无法获知是否在收录后原作者是否对链接增加了违反法律甚至其他破坏用户计算机等行为。所以友链网站均可能存在风险，请你须知。
+                        </p>
+                        <p>所以在我力所能及的情况下，我会包括但不限于：</p>
+                        <ol>
+                            <li>针对收录的博客中的绝大多数内容通过标题来鉴别是否存在有风险的内容</li>
+                            <li>在收录的友链好文推荐中检查是否存在风险内容</li>
+                        </ol>
+                        <p>但是你在访问的时候，仍然无法避免，包括但不限于：</p>
+                        <ol>
+                            <li>作者更换了超链接的指向，替换成了其他内容</li>
+                            <li>作者的服务器被恶意攻击、劫持、被注入恶意内容</li>
+                            <li>作者的域名到期，被不法分子用作他用</li>
+                            <li>作者修改了文章内容，增加钓鱼网站、广告等无效信息</li>
+                            <li>不完善的隐私保护对用户的隐私造成了侵害、泄漏</li>
+                        </ol>
+                        <p>最新文章部分为机器抓取，本站作者未经过任何审核和筛选，本着友链信任原则添加的。如果你发现其中包含违反中华人民共和国法律的内容，请及时联系和举报。该友链会被拉黑。</p>
+                        <p>如果因为从本页跳转给你造成了损失，深表歉意，并且建议用户如果发现存在问题在本页面进行回复。通常会很快处理。如果长时间无法得到处理，建议联系：<strong>fan@infun.fun</strong>。
+                        </p>
+                    </details>
+                    <details open="">
+                        <summary>🧀 友链申请方式</summary>
+                        <h2><a class="headerlink" title="本站添加的友链要求" data-pjax-state=""></a>本站添加的友链要求</h2>
+                        <ol>
+                            <li>网站域名在中国内地完成ICP备案</li>
+                            <li>网站能够HTTPS访问，并且长期正常服务</li>
+                            <li>网站类型为<strong>个人网站、个人博客</strong>，并且含本站友链</li>
+                        </ol>
+                        <p>请（<a href="#post-comment" onclick="" data-pjax-state="">点击这里快速提交</a>）站点信息申请友情链接，申请后一周内会统一添加，即使不通过也会给予邮件回复。</p>
+                        <h2><a class="headerlink" title="你提交的信息有可能被修改" data-pjax-state=""></a>你提交的信息有可能被修改</h2>
+                        <p>如果有修改，我会将修改内容进行告知</p>
+                        <ol>
+                            <li>为了友链相关页面和组件的统一性和美观性，可能会对你的昵称进行缩短处理，例如昵称包含<strong>个人空间</strong>、<strong>博客</strong>、<strong>XX的XX</strong>等内容或形式将被简化。
+                            </li>
+                            <li>本站全站为HTTPS访问，为了显示效果和内容安全性考虑，贵站头像地址需要同样为HTTPS链接。
+                            </li>
+                            <li>如果贵站更换了网站名称、访问地址或其他相关信息，请尽快告知本站，收到信息后将及时更新友链。</li>
+                        </ol>
+                        <h2><a class="headerlink" title="我的友链信息" data-pjax-state=""></a>我的友链信息
+                        </h2>
+                        <ol>
+                            <li>网站名称: <code>infanx blog</code></li>
+                            <li>网站地址: <code>https://www.infanx.com</code></li>
+                            <li>网站描述: <code>个人技术分享</code></li>
+                            <li>网站头像: <code>https://cdn.infanx.com/images/ABA7561F29AE4D0DB8DE37F7C812B559.jpg</code></li>
+                            <li>网站RSS: <code>https://www.infanx.com/rss.xml</code></li>
+                        </ol>
+                        <h2><strong>友链申请格式如下🥳</strong></h2>
+                        <div class="code-toolbar"><pre class="line-numbers language-text" tabindex="0"><code class="hljs language-text">网站名称：
+网站地址：
+网站描述：
+网站头像（请使用HTTPS链接）：<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><div class="toolbar c-title c-hr"><div class="toolbar-item"><span>Text</span></div><div class="custom-item absolute top-0"><i class="haofont hao-icon-paste copy-button code-copy cursor-pointer"></i><i class="fa-sharp fa-solid haofont hao-icon-angle-down code-expander cursor-pointer"></i></div><div class="custom-item absolute top-0"><i class="haofont hao-icon-paste copy-button code-copy cursor-pointer"></i><i class="fa-sharp fa-solid haofont hao-icon-angle-down code-expander cursor-pointer"></i></div></div></div>
+                        <h2><strong>示例 📢：</strong></h2>
+                        <div class="code-toolbar"><pre class="line-numbers language-text" tabindex="0"><code class="hljs language-text">网站名称：infanx blog
+网站地址：https://www.infanx.com
+网站描述：个人技术分享
+网站头像：https://cdn.infanx.com/images/ABA7561F29AE4D0DB8DE37F7C812B559.jpg<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><div class="toolbar c-title c-hr"><div class="toolbar-item"><span>Text</span></div><div class="custom-item absolute top-0"><i class="haofont hao-icon-paste copy-button code-copy cursor-pointer"></i><i class="fa-sharp fa-solid haofont hao-icon-angle-down code-expander cursor-pointer"></i></div><div class="custom-item absolute top-0"><i class="haofont hao-icon-paste copy-button code-copy cursor-pointer"></i><i class="fa-sharp fa-solid haofont hao-icon-angle-down code-expander cursor-pointer"></i></div></div></div>
+                    </details>
+                    <script>
+                        var fdataUser = {
+                            jsonurl: '',
+                            apiurl: "[(${theme.config.fcircle.apiurl})]",
+                            apipublicurl: '', //默认公共库
+                            initnumber: 20,  //首次加载文章数
+                            stepnumber: 20,  //更多加载文章数
+                            article_sort: 'created', //文章排序 updated or created
+                            error_img: 'https://sdn.geekzu.org/avatar/57d8260dfb55501c37dde588e7c3852c'
+                        }
+                    </script>
+                    <script  th:src="@{/assets/libs/fcircle/heo-fcircle3mini.js}"></script>
+                    <th:block th:if="${htmlType == 'page'}" th:utext="${singlePage.content.content}">
+                    </th:block>
+                </div>
+                <hr/>
+                <!--/* 评论组件 */-->
+                <th:block th:replace="~{modules/comment :: comment(group = 'plugin.halo.run', kind = 'Plugin', name = ${pluginName}, allowComment = true)}"/>
+                <style>
+                    /*修复友链页面表情选择器无法显示完全的bug*/
+                    .tk-submit {
+                        overflow: inherit !important;
+                    }
+                </style>
+            </div>
+        </main>
+        <footer th:replace="~{modules/footer}"/>
+    </div>
+</th:block>
+</html>

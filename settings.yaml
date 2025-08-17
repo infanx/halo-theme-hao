@@ -1,0 +1,864 @@
+apiVersion: v1alpha1
+kind: Setting
+metadata:
+  name: infanx-setting
+spec:
+  forms:
+    - group: top
+      label: 顶部
+      formSchema:
+        - $formkit: group
+          name: above
+          label: 首页第一屏
+          value:
+            enable_above: false
+            typed:
+            enable_typed_random:
+            enable_above_video:
+            index_img:
+            phone_index_img:
+            index_video:
+          children:
+            - $formkit: radio
+              name: enable_above
+              key: enable_above
+              id: enable_above
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: repeater
+              name: typed
+              if: $get(enable_above).value
+              label: 打字机文字
+              value: [ ]
+              children:
+                - $formkit: text
+                  name: text
+                  label: 自定义文字
+            - $formkit: radio
+              label: 随机文字
+              if: $get(enable_above).value
+              name: enable_typed_random
+              key: enable_typed_random
+              id: enable_typed_random
+              value: false
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: radio
+              if: $get(enable_above).value
+              label: 背景模式
+              name: enable_above_video
+              key: enable_above_video
+              id: enable_above_video
+              value: false
+              options:
+                - label: 显示视频
+                  value: true
+                - label: 显示图片
+                  value: false
+            - $formkit: attachment
+              name: index_video
+              key: index_video
+              id: index_video
+              if: $get(enable_above).value  &&  $get(enable_above_video).value
+              label: 视频壁纸
+              value: ""
+            - $formkit: attachment
+              name: index_img
+              if: $get(enable_above).value  &&  $get(enable_above_video).value == false
+              label: PC端图片壁纸
+              value: https://www.dmoe.cc/random.php
+            - $formkit: attachment
+              name: phone_index_img
+              if: $get(enable_above).value  &&  $get(enable_above_video).value == false
+              label: 移动端图片壁纸
+              value: https://imgapi.kouseki.cn/random?sort=mp
+        - $formkit: group
+          name: global_background
+          label: 全局背景
+          value:
+            enable_global_background_img: false
+            index_background_img:
+          children:
+            - $formkit: radio
+              name: enable_global_background_img
+              key: enable_global_background_img
+              id: enable_global_background_img
+              value: false
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: radio
+              if: $get(enable_global_background_img).value
+              label: 背景模式
+              name: enable_global_background_above_video
+              key: enable_global_background_above_video
+              id: enable_global_background_above_video
+              value: false
+              options:
+                - label: 视频
+                  value: true
+                - label: 图片
+                  value: false
+            - $formkit: attachment
+              name: global_background_img
+              key: global_background_img
+              id: global_background_img
+              if: $get(enable_global_background_img).value  &&  $get(enable_global_background_above_video).value == false
+              label: 图片地址
+            - $formkit: attachment
+              name: global_background_video
+              id: global_background_video
+              key: global_background_video
+              if: $get(enable_global_background_img).value  &&  $get(enable_global_background_above_video).value
+              label: 视频地址
+        - $formkit: group
+          name: BannerRight
+          label: 推荐文章
+          value:
+            recommendPost: latest
+          children:
+            - $formkit: select
+              name: recommendPost
+              id: recommendPost
+              key: recommendPost
+              value: latest
+              options:
+                - label: 最新文章
+                  value: latest
+                - label: 自定义
+                  value: custom
+            - $formkit: repeater
+              if: $get(recommendPost).value === custom
+              name: recommendPostCustom
+              label: 自定义文章
+              max: 6
+              children:
+                - $formkit: postSelect
+                  name: post
+                  label: 文章
+                  value: ""
+                  validation: required
+    - group: layout
+      label: 布局
+      formSchema:
+        - $formkit: group
+          name: post
+          value:
+            cols: col3
+            postLocation: top
+          children:
+            - $formkit: select
+              name: cols
+              label: 文章布局
+              options:
+                - label: 单列
+                  value: col1
+                - label: 两列
+                  value: col2
+                - label: 三列
+                  value: col3
+            - $formkit: select
+              name: postLocation
+              label: 封面位置
+              options:
+                - label: 上方
+                  value: top
+                - label: 左侧
+                  value: left
+                - label: 右侧
+                  value: right
+                - label: 交替
+                  value: alternate
+        - $formkit: url
+          name: postRandomImg
+          label: 随机封面
+          value: https://picsum.photos/800/600
+    - group: post
+      label: 文章
+      formSchema:
+        - $formkit: group
+          name: aiDescription
+          label: 文章 AI 摘要
+          value:
+            aiDescriptionEnable: false
+            gptName:
+            mode: local
+            switchBtn: false
+            btnLink:
+            randomNum:
+            basicWordCount:
+            key:
+            Referer:
+          children:
+            - $formkit: radio
+              name: aiDescriptionEnable
+              id: aiDescriptionEnable
+              key: aiDescriptionEnable
+              value: false
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: text
+              if: $get(aiDescriptionEnable).value
+              name: gptName
+              label: 名称
+              placeholder: 请输入内容
+              value: KunKunYu
+            - $formkit: radio
+              if: $get(aiDescriptionEnable).value
+              name: mode
+              label: 模式
+              value: local
+              help: 本地模式需要自己填写文章摘要
+              options:
+                - label: 本地
+                  value: local
+                - label: ai
+                  value: tianli
+            - $formkit: radio
+              if: $get(aiDescriptionEnable).value
+              name: switchBtn
+              label: 显示切换按钮
+              value: false
+              options:
+                - label: 是
+                  value: true
+                - label: 否
+                  value: false
+            - $formkit: url
+              if: $get(aiDescriptionEnable).value
+              name: btnLink
+              label: 链接地址
+              placeholder: 输入链接地址
+              value: https://afdian.net/item/f18c2e08db4411eda2f25254001e7c00
+            - $formkit: number
+              if: $get(aiDescriptionEnable).value
+              name: randomNum
+              label: 随机次数
+              value: 3
+              help: 按钮最大的随机次数，也就是一篇文章最大随机出来几种
+            - $formkit: number
+              if: $get(aiDescriptionEnable).value
+              name: basicWordCount
+              label: 字符数
+              value: 1000
+              help: 最低获取字符数, 最小1000, 最大1999
+            - $formkit: text
+              if: $get(aiDescriptionEnable).value
+              name: key
+              label: key
+              value: xxxx
+              placeholder: 请输入key
+            - $formkit: url
+              if: $get(aiDescriptionEnable).value
+              name: Referer
+              label: 你的博客地址
+              help: 注意保留最后的斜杠
+              value: https://xx.xx/
+    - group: todo
+      label: 待办
+      formSchema:
+        - $formkit: repeater
+          name: list
+          label: 待办清单
+          value: [ ]
+          children:
+            - $formkit: text
+              name: class_name
+              label: 标题
+            - $formkit: radio
+              name: seat
+              label: 位置
+              value: left
+              options:
+                - label: 左
+                  value: left
+                - label: 右
+                  value: right
+            - $formkit: repeater
+              name: todo_list
+              label: 待办列表
+              value: [ ]
+              children:
+                - $formkit: textarea
+                  name: content
+                  label: 内容
+                - $formkit: radio
+                  name: completed
+                  value: false
+                  options:
+                    - label: 完成
+                      value: true
+                    - label: 未完成
+                      value: false
+
+    - group: comments
+      label: 评论
+      formSchema:
+        - $formkit: radio
+          name: commentsEnable
+          id: commentsEnable
+          key: commentsEnable
+          value: true
+          options:
+            - label: 打开
+              value: true
+            - label: 关闭
+              value: false
+        - $formkit: select
+          name: use
+          label: 评论系统
+          id: use
+          key: use
+          if: $get(commentsEnable).value
+          value: commentWidget
+          options:
+            - label: 默认
+              value: commentWidget
+            - label: Twikoo
+              value: Twikoo
+            - label: Artalk
+              value: Artalk
+            - label: Waline
+              value: Waline
+        - $formkit: radio
+          if: ($get(use).value == 'Twikoo' || $get(use).value == 'Artalk' || $get(use).value == 'Waline' ) && $get(commentsEnable).value
+          name: lazyload
+          label: 评论懒加载
+          value: false
+          options:
+            - label: 打开
+              value: true
+            - label: 关闭
+              value: false
+        - $formkit: group
+          if: $get(commentsEnable).value &&  $get(use).value == 'Artalk'
+          name: artalks
+          key: artalks
+          label: Artalk评论配置 (文档：https://artalk.js.org/)
+          value:
+            siteName: ""
+            server: ""
+            js: ""
+            css: ""
+          children:
+            - $formkit: url
+              name: server
+              key: artalkServer
+              label: Artalk评论 - 后端URL
+              placeholder: 请输入后端URL
+              help: 详情请查看文档 (后缀带 / )
+              validation: required
+            - $formkit: text
+              name: siteName
+              key: siteName
+              label: 标题
+              placeholder: 请输入标题
+              validation: required
+            - $formkit: text
+              name: artalkJs
+              key: artalkJs
+              label: Artalk评论 - js
+              placeholder: 请输入js文件地址
+              help: 主题的Artalk版本是最新版本(如果你使用的不是最新版本请自己引入js文件)
+            - $formkit: text
+              name: artalkCss
+              key: artalkCss
+              label: Artalk评论 - css
+              placeholder: 请输入css文件地址
+              help: 主题的Artalk版本是最新版本(如果你使用的不是最新版本请自己引入css文件)
+        - $formkit: group
+          if: $get(commentsEnable).value &&  $get(use).value == 'Twikoo'
+          name: twikoos
+          key: twikoos
+          label: Twikoo评论配置 (文档：https://twikoo.js.org/)
+          value:
+            envId:
+            accessToken:
+            js: ""
+          children:
+            - $formkit: url
+              name: envId
+              key: envId
+              label: Twikoo评论 - 环境id/后端URL
+              placeholder: 请输入环境id或URL
+              help: 详情请查看文档 (后缀带 / )
+              validation: required
+            - $formkit: text
+              name: accessToken
+              key: accessToken
+              label: Twikoo评论 - 管理员令牌
+              placeholder: 请输入token
+              help: 在浏览器F12的控制台中获取，用于显示弹幕，详情请查看文档
+              validation: required
+            - $formkit: text
+              name: js
+              key: js
+              label: Twikoo评论 - js
+              placeholder: 请输入js文件地址
+              help: 主题的twikoo版本是最新版本(如果你使用的不是最新版本请自己引入js文件)
+        - $formkit: group
+          if: $get(commentsEnable).value && $get(use).value == 'Waline'
+          name: walines
+          key: walines
+          label: Waline评论配置 (文档：https://waline.js.org/)
+          value:
+            serverURL: ""
+            walinesJs: ""
+            walinesCss: ""
+            locale: "{'placeholder': '欢迎评论', 'sofa': '来发评论吧~1'}"
+          children:
+            - $formkit: url
+              name: serverURL
+              key: serverURL
+              label: Waline评论 - 后端URL
+              placeholder: 请输入后端URL
+              help: 详情请查看文档 (后缀不带 / )
+              validation: required
+            - $formkit: text
+              name: walinesJs
+              key: walinesJs
+              label: Waline评论 - js
+              placeholder: 请输入js文件地址
+              help: 主题的walines版本是最新版本(如果你使用的不是最新版本请自己引入js文件)
+            - $formkit: text
+              name: walinesCss
+              key: walinesCss
+              label: Waline评论 - css
+              placeholder: 请输入css文件地址
+              help: 主题的walines版本是最新版本(如果你使用的不是最新版本请自己引入css文件)
+            - $formkit: code
+              name: locale
+              height: 200px
+              label: 选项
+              placeholder: 请输入json格式数据
+              help: "格式：{'placeholder': '欢迎评论', 'sofa': '来发评论吧~1'} 更多请查看文档：https://waline.js.org/cookbook/customize/locale.html#%E4%BE%8B%E5%AD%90"
+              language: json
+        - $formkit: group
+          if: ($get(use).value == 'Twikoo' || $get(use).value == 'Artalk' || $get(use).value == 'Waline' ) && $get(commentsEnable).value
+          name: visitorMail
+          label: 评论匿名邮箱
+          value:
+            visitorMailEnable: true
+            mail: visitor@xxx.com
+          children:
+            - $formkit: radio
+              name: visitorMailEnable
+              id: visitorMailEnable
+              key: visitorMailEnable
+              options:
+                - label: 打开
+                  value: true
+                - label: 关闭
+                  value: false
+            - $formkit: text
+              if: $get(visitorMailEnable).value
+              name: mail
+              label: 匿名邮箱
+              placeholder: 请输入匿名邮箱
+        - $formkit: group
+          name: commentBarrageConfig
+          if: ($get(use).value == 'Twikoo' || $get(use).value == 'Artalk' || $get(use).value == 'Waline' ) && $get(commentsEnable).value
+          label: 留言弹幕配置
+          value:
+            commentBarrageEnable: true
+            maxBarrage: 1
+            barrageTime: 4000
+            mailMd5:
+          children:
+            - $formkit: radio
+              name: commentBarrageEnable
+              id: commentBarrageEnable
+              key: commentBarrageEnable
+              options:
+                - label: 显示
+                  value: true
+                - label: 隐藏
+                  value: false
+            - $formkit: number
+              if: $get(commentBarrageEnable).value
+              name: maxBarrage
+              key: maxBarrage
+              label: 同时最多显示弹幕数
+              placeholder: 请输入显示弹幕数
+              help: 右下角同时最多显示的弹幕数量
+              validation: required
+            - $formkit: number
+              if: $get(commentBarrageEnable).value
+              name: barrageTime
+              key: barrageTime
+              label: 弹幕显示间隔时间ms
+              placeholder: 请输入间隔时间ms
+              help: 右下角弹出热评弹幕的间隔时间
+              validation: required
+            - $formkit: text
+              if: $get(commentBarrageEnable).value && $get(use).value != 'Waline'
+              name: mailMd5
+              key: mailMd5
+              label: 评论 - 博主邮箱MD5值
+              placeholder: 请输入md5值
+              help: 用于验证博主评论，可前往cmd5.com加密自己使用的邮箱，选择32位小写
+              validation: required
+
+    - group: style
+      label: 样式
+      formSchema:
+        - $formkit: radio
+          name: colorScheme
+          label: 配色
+          value: system
+          options:
+            - label: 跟随系统
+              value: system
+            - label: 深色
+              value: dark
+            - label: 浅色
+              value: light
+        - $formkit: color
+          name: themeLightSkin
+          label: 浅色基色
+          value: "#39469C"
+        - $formkit: color
+          name: themeDarkSkin
+          label: 深色基色
+          value: "#626262"
+        - $formkit: radio
+          name: universe
+          label: 深色模式粒子效果
+          value: true
+          options:
+            - label: 打开
+              value: true
+            - label: 关闭
+              value: false
+        - $formkit: group
+          name: translate
+          label: 简繁转换
+          value:
+            defaultEncoding: 2
+            translateEnable: true
+          children:
+            - $formkit: radio
+              name: defaultEncoding
+              label: 默认语言
+              options:
+                - label: 简体中文
+                  value: 2
+                - label: 繁體中文
+                  value: 1
+            - $formkit: radio
+              name: translateEnable
+              label: 允许切换语言
+              options:
+                - label: 打开
+                  value: true
+                - label: 关闭
+                  value: false
+        - $formkit: textarea
+          name: fontFamily
+          label: 全局字体
+          placeholder: '"PingFang SC", "Hiragino Sans GB", "Microsoft YaHei"'
+
+    - group: code
+      label: 代码块
+      formSchema:
+        - $formkit: radio
+          name: enable
+          id: enable
+          key: enable
+          label: 代码块
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
+        - $formkit: radio
+          name: enable_title
+          if: $get(enable).value
+          label: 代码块标题
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
+        - $formkit: radio
+          name: enable_hr
+          if: $get(enable).value
+          label: 代码块标题分割线
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
+        - $formkit: radio
+          name: enable_line
+          if: $get(enable).value
+          label: 代码块行号
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
+        - $formkit: radio
+          name: enable_copy
+          if: $get(enable).value
+          label: 代码块复制按钮
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
+        - $formkit: radio
+          name: enable_expander
+          if: $get(enable).value
+          label: 代码块折叠
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
+        - $formkit: select
+          name: theme_light
+          if: $get(enable).value
+          label: 代码块浅色主题
+          value: coldark-cold
+          options:
+            - value: "one-dark"
+              label: "one-dark"
+            - value: "one-light"
+              label: "one-light"
+            - value: "a11y-dark"
+              label: "a11y-dark"
+            - value: "atom-dark"
+              label: "atom-dark"
+            - value: "base16-ateliersulphurpool.light"
+              label: "base16-ateliersulphurpool.light"
+            - value: "cb"
+              label: "cb"
+            - value: "coldark-cold"
+              label: "coldark-cold"
+            - value: "coldark-dark"
+              label: "coldark-dark"
+            - value: "coy-without-shadows"
+              label: "coy-without-shadows"
+            - value: "darcula"
+              label: "darcula"
+            - value: "dracula"
+              label: "dracula"
+            - value: "duotone-dark"
+              label: "duotone-dark"
+            - value: "duotone-earth"
+              label: "duotone-earth"
+            - value: "duotone-forest"
+              label: "duotone-forest"
+            - value: "duotone-light"
+              label: "duotone-light"
+            - value: "duotone-sea"
+              label: "duotone-sea"
+            - value: "duotone-space"
+              label: "duotone-space"
+            - value: "ghcolors"
+              label: "ghcolors"
+            - value: "gruvbox-dark"
+              label: "gruvbox-dark"
+            - value: "gruvbox-light"
+              label: "gruvbox-light"
+            - value: "holi-theme"
+              label: "holi-theme"
+            - value: "hopscotch"
+              label: "hopscotch"
+            - value: "lucario"
+              label: "lucario"
+            - value: "material-dark"
+              label: "material-dark"
+            - value: "material-light"
+              label: "material-light"
+            - value: "material-oceanic"
+              label: "material-oceanic"
+            - value: "night-owl"
+              label: "night-owl"
+            - value: "nord"
+              label: "nord"
+            - value: "pojoaque"
+              label: "pojoaque"
+            - value: "shades-of-purple"
+              label: "shades-of-purple"
+            - value: "solarized-dark-atom"
+              label: "solarized-dark-atom"
+            - value: "synthwave84"
+              label: "synthwave84"
+            - value: "vs"
+              label: "vs"
+            - value: "vsc-dark-plus"
+              label: "vsc-dark-plus"
+            - value: "xonokai"
+              label: "xonokai"
+            - value: "z-touch"
+              label: "z-touch"
+        - $formkit: select
+          name: theme_dark
+          if: $get(enable).value
+          label: 代码块深色主题
+          value: coldark-dark
+          options:
+            - value: "one-dark"
+              label: "one-dark"
+            - value: "one-light"
+              label: "one-light"
+            - value: "a11y-dark"
+              label: "a11y-dark"
+            - value: "atom-dark"
+              label: "atom-dark"
+            - value: "base16-ateliersulphurpool.light"
+              label: "base16-ateliersulphurpool.light"
+            - value: "cb"
+              label: "cb"
+            - value: "coldark-cold"
+              label: "coldark-cold"
+            - value: "coldark-dark"
+              label: "coldark-dark"
+            - value: "coy-without-shadows"
+              label: "coy-without-shadows"
+            - value: "darcula"
+              label: "darcula"
+            - value: "dracula"
+              label: "dracula"
+            - value: "duotone-dark"
+              label: "duotone-dark"
+            - value: "duotone-earth"
+              label: "duotone-earth"
+            - value: "duotone-forest"
+              label: "duotone-forest"
+            - value: "duotone-light"
+              label: "duotone-light"
+            - value: "duotone-sea"
+              label: "duotone-sea"
+            - value: "duotone-space"
+              label: "duotone-space"
+            - value: "ghcolors"
+              label: "ghcolors"
+            - value: "gruvbox-dark"
+              label: "gruvbox-dark"
+            - value: "gruvbox-light"
+              label: "gruvbox-light"
+            - value: "holi-theme"
+              label: "holi-theme"
+            - value: "hopscotch"
+              label: "hopscotch"
+            - value: "lucario"
+              label: "lucario"
+            - value: "material-dark"
+              label: "material-dark"
+            - value: "material-light"
+              label: "material-light"
+            - value: "material-oceanic"
+              label: "material-oceanic"
+            - value: "night-owl"
+              label: "night-owl"
+            - value: "nord"
+              label: "nord"
+            - value: "pojoaque"
+              label: "pojoaque"
+            - value: "shades-of-purple"
+              label: "shades-of-purple"
+            - value: "solarized-dark-atom"
+              label: "solarized-dark-atom"
+            - value: "synthwave84"
+              label: "synthwave84"
+            - value: "vs"
+              label: "vs"
+            - value: "vsc-dark-plus"
+              label: "vsc-dark-plus"
+            - value: "xonokai"
+              label: "xonokai"
+            - value: "z-touch"
+              label: "z-touch"
+
+    - group: other
+      label: 其他设置
+      formSchema:
+        - $formkit: group
+          name: opengraph
+          label: Open Graph
+          children:
+            - $formkit: attachment
+              name: image
+              label: 默认图片
+        - $formkit: group
+          name: vanillaLazyload
+          label: 懒加载
+          value:
+            enable: true
+            errorImg: "/themes/infanx/assets/images/404.svg"
+            loadingImg: /themes/infanx/assets/images/loading.svg
+          children:
+            - $formkit: radio
+              name: enable
+              id: enable
+              key: enable
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: attachment
+              name: loadingImg
+              id: loadingImg
+              key: loadingImg
+              if: $get(enable).value
+              label: 加载图片
+              validation: required
+            - $formkit: attachment
+              name: errorImg
+              label: 加载失败
+              validation: required
+        - $formkit: group
+          name: loadingBoxs
+          label: 加载动画
+          children:
+            - $formkit: radio
+              name: loadingBoxEnable
+              id: loadingBoxEnable
+              key: loadingBoxEnable
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+            - $formkit: attachment
+              name: loadingBoxImg
+              if: $get(loadingBoxEnable).value
+              label: 加载图片
+            - $formkit: radio
+              name: loadProgressBar
+              label: 加载进度条
+              options:
+                - label: 启用
+                  value: true
+                - label: 禁用
+                  value: false
+        - $formkit: radio
+          name: bubbleEnable
+          label: 页面卡片气泡效果
+          value: true
+          options:
+            - label: 启用
+              value: true
+            - label: 禁用
+              value: false
