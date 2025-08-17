@@ -18,6 +18,7 @@
         </header>
         <main class="layout hide-aside" id="content-inner">
             <div id="page">
+<<<<<<< HEAD
                 <div class="author-content author-content-item essayPage single" th:style="'background:url(' + ${assets_link} + '/images/background/nj-light.webp) left 45% / cover no-repeat'">
                     <div class="card-content">
                         <div class="author-content-item-tips">即刻短文</div>
@@ -33,6 +34,14 @@
                         </div>
                     </div>
                 </div>
+=======
+                <div th:replace="~{modules/author-content :: author-content(background = ${assets_link + '/images/nj-light.jpg'},
+                        smallTitle = '即刻短文',
+                        bigTitle = '分享生活的小确幸',
+                        detail = '本页面由 Halo/Moment 插件构建',
+                        buttonUrl = '部署瞬间',
+                        buttonTitle = 'https://githubfast.com/halo-sigs/plugin-moments')}"></div>
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                 <div id="bber">
                     <section class="timeline page-1">
                         <ul class="list" id="waterfall">

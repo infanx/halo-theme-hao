@@ -26,7 +26,11 @@
                             <i class="haofont hao-icon-paper-plane1"></i>
                             <span class="banner-button-text">随机访问</span>
                         </a>
+<<<<<<< HEAD
                         <a class="banner-button" href="#submit-links" rel="external nofollow">
+=======
+                        <a class="banner-button" href="#post-comment" rel="external nofollow">
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                             <i class="haofont hao-icon-link"></i>
                             <span class="banner-button-text">申请友链</span>
                         </a>
@@ -121,21 +125,39 @@
                     localStorage.setItem('logos', JSON.stringify(logos))
                 </script>
                 <div class="flink" id="article-container">
+<<<<<<< HEAD
                     <th:block th:each="group,iterStat : ${groups}">
+=======
+        
+                    <th:block th:each="group,iterStat : ${groups}">
+        
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                         <h2 th:if="${not #lists.isEmpty(group.spec.displayName)}">
                             <a class="headerlink" th:href="'#'+${group.spec.displayName}+'-'+${group.links.size}"
                                th:title="${group.spec.displayName}+ '('+${group.links.size}+')'"></a>
                             [[${group.spec.displayName}]] ([[${group.links.size}]])
                         </h2>
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                         <div class="flink-desc" th:if="${not #strings.isEmpty(#annotations.get(group, 'description'))}">[[${#annotations.get(group, 'description')}]]</div>
         
                         <!-- 第一个，使用卡片展示 -->
                         <div th:if="${#strings.equals(#annotations.get(group, 'displayStyle'),'beautify') && not #lists.isEmpty(group.links)}"
                              class="site-card-group">
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                             <div class="site-card" th:each="link : ${group.links}">
                                 <span th:if="${not #strings.isEmpty(#annotations.get(link, 'label'))}"
                                       th:style="'background-color:' + ${#annotations.get(link,'labelColor')}"
                                       class="site-card-tag">[[${#annotations.get(link, 'label')}]]</span>
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                                 <a class="img" target="_blank" th:href="${link.spec.url}" th:title="${link.spec.displayName}">
                                     <img class="flink-avatar" style="pointer-events: none;" th:alt="${link.spec.displayName}"
                                          th:with="img = @{${#strings.isEmpty(#annotations.get(link, 'siteshot')) ? link.spec.logo : #annotations.get(link,'siteshot') }}"
@@ -143,6 +165,10 @@
                                          th:src="${isLazyload ? loadingImg : img}"
                                          th:data-lazy-src="${ isLazyload ? img : ''}">
                                 </a>
+<<<<<<< HEAD
+=======
+        
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                                 <a class="info cf-friends-link" target="_blank" th:href="${link.spec.url}"
                                    th:title="${link.spec.displayName}">
                                     <div class="site-card-avatar no-lightbox">
@@ -158,6 +184,11 @@
                                     </div>
                                 </a>
                             </div>
+<<<<<<< HEAD
+=======
+        
+        
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                         </div>
         
                         <div class="flink-list"
@@ -204,6 +235,7 @@
                             </div>
                         </div>
                     </th:block>
+<<<<<<< HEAD
                     <hr>
                     <h2 id="submit-links"><a href="#友情链接申请" class="headerlink" title="友情链接申请" draggable="false" data-pjax-state=""></a>🧑‍🤝‍🧑友情链接申请</h2>
                     <p>很高兴您能访问本站并愿意和我交流，如果你也想加入友链，可以在下方评论区留言，我在看到您的信息后会及时添加。</p>
@@ -267,6 +299,13 @@
 网站描述：个人技术分享
 网站头像：https://cdn.infanx.com/images/ABA7561F29AE4D0DB8DE37F7C812B559.jpg<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre><div class="toolbar c-title c-hr"><div class="toolbar-item"><span>Text</span></div><div class="custom-item absolute top-0"><i class="haofont hao-icon-paste copy-button code-copy cursor-pointer"></i><i class="fa-sharp fa-solid haofont hao-icon-angle-down code-expander cursor-pointer"></i></div><div class="custom-item absolute top-0"><i class="haofont hao-icon-paste copy-button code-copy cursor-pointer"></i><i class="fa-sharp fa-solid haofont hao-icon-angle-down code-expander cursor-pointer"></i></div></div></div>
                     </details>
+=======
+
+                    <!-- 这里还没写完 -->
+                    <!-- <div>
+
+                    </div> -->
+>>>>>>> 68a5532a0ec7b002a9a5c5ab6e9a75108752bc68
                     <script>
                         var fdataUser = {
                             jsonurl: '',
